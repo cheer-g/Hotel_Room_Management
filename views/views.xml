@@ -1,0 +1,67 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record model="ir.ui.view" id="hotel_rooms.list">
+      <field name="name">hotel_rooms list</field>
+      <field name="model">hotel_rooms.hotel_rooms</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="room_no" string="Room Number"/>
+          <field name="bed" string="Bed Type"/>
+          <field name="total_beds" string="Available Beds"/>
+          <field name="facilities" string="Facilities"/>
+          <field name="rent" string="Rent"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="hotel_rooms.action_window">
+      <field name="name">Rooms</field>
+      <field name="res_model">hotel_rooms.hotel_rooms</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="hotel_rooms.action_server">
+      <field name="name">hotel_rooms server</field>
+      <field name="model_id" ref="model_hotel_rooms_hotel_rooms"/>
+      <field name="arch" type="xml">
+        <form string="General">
+          <group colspan="4">
+            <group colspan="2" col="2">
+              <seperator string="Basic" colo="2">
+              <field name="room_no" string="Room Number"/>
+              <field name="bed" string="Bed Type"/>
+              <field name="total_beds" string="Available Beds"/>
+              <field name="facilities" string="Facilities"/>
+              <field name="rent" string="Rent"/>
+              </seperator>
+            </group>
+          </group>
+        </form>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="Hotel Management" id="hotel_rooms.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Configuration" id="hotel_rooms.menu_1" parent="hotel_rooms.menu_root"/>
+    <menuitem name="Reception" id="hotel_rooms.menu_2" parent="hotel_rooms.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Rooms" id="hotel_rooms.menu_1_list" parent="hotel_rooms.menu_1"
+              action="hotel_rooms.action_window"/>
+    <menuitem name="Accommodation" id="hotel_accommodation" parent="hotel_rooms.menu_2"
+              action="hotel_rooms.action_server"/>
+
+  </data>
+</odoo>
