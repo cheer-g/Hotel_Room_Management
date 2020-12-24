@@ -126,11 +126,11 @@
 
     <!-- Top menu item -->
 
-    <menuitem name="Room Management" id="room_management.menu_root" action="room_management.action_window"/>
+    <menuitem name="Room Management" id="room_management.menu_root"/>
 
     <!-- menu categories -->
 
-    <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>
+<!--    <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>-->
     <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root" sequence="2" />
 
     <!-- actions -->

@@ -1,0 +1,11 @@
+<odoo>
+    <data noupdate="1">
+<!--        Sequence for Accommodation-->
+        <record id="seq_acc" model="ir.sequence">
+            <field name="name">Accommodation Sequence</field>
+            <field name="code">acc.seq</field>
+            <field name="prefix">HM/ROOM/</field>
+            <field name="padding">3</field>
+        </record>
+    </data>
+</odoo>

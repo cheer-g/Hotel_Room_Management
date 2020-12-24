@@ -7,16 +7,41 @@
             <field name="name">Accommodation</field>
             <field name="model">room_management.accommodation</field>
             <field name="arch" type="xml">
-                <form>
+                <form string="Accommodation">
+                    <header>
+                        <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" states="draft"/>
+                        <button name="action_checkout" type="object" string="Check Out" class="oe_highlight" states="checkin"/>
+                        <button name="action_cancel" type="object" string="Cancel" class="oe_highlight" states="checkin"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,checkin,checkout"/>
+                    </header>
                     <group colspan="4">
                         <group col="2">
-                            <field name="ref_no"/>
+                            <div class="oe_title">
+                                <h1>
+                                    <field name="seq_no" readonly="1"/>
+                                </h1>
+                            </div>
                             <field name="guest"/>
                             <field name="guest_count"/>
                             <field name="check_in"/>
+                            <field name="room_no"/>
                         </group>
                     </group>
                 </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="room_accommodation_tree">
+            <field name="name">View Accommodations</field>
+            <field name="model">room_management.accommodation</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="seq_no" readonly="1"/>
+                    <field name="guest"/>
+                    <field name="room_no"/>
+                    <field name="state"/>
+                    <field name="bed"/>
+                </tree>
             </field>
         </record>
 
@@ -26,9 +51,15 @@
           <field name="res_model">room_management.accommodation</field>
           <field name="view_mode">tree,form</field>
         </record>
+        <record model="ir.actions.act_window" id="room_management.acc_list">
+          <field name="name">Accommodations</field>
+          <field name="res_model">room_management.accommodation</field>
+          <field name="view_mode">tree,form</field>
+        </record>
+
 
 <!--        menu-->
-        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>
+        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" action="room_management.acc_list" sequence="1"/>
         <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception" action="room_management.acc_window"/>
     </data>
 </odoo>
