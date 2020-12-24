@@ -2,20 +2,20 @@
 from odoo import http
 
 
-class HotelRooms(http.Controller):
-    @http.route('/hotel_rooms/hotel_rooms/', auth='public')
+class RoomManagement(http.Controller):
+    @http.route('/room_management/room_management/', auth='public')
     def index(self, **kw):
         return "Hello, world"
 
-    @http.route('/hotel_rooms/hotel_rooms/objects/', auth='public')
+    @http.route('/room_management/room_management/objects/', auth='public')
     def list(self, **kw):
-        return http.request.render('hotel_rooms.listing', {
-            'root': '/hotel_rooms/hotel_rooms',
-            'objects': http.request.env['hotel_rooms.hotel_rooms'].search([]),
+        return http.request.render('room_management.listing', {
+            'root': '/room_management/room_management',
+            'objects': http.request.env['room_management.room_management'].search([]),
         })
 
-    @http.route('/hotel_rooms/hotel_rooms/objects/<model("hotel_rooms.hotel_rooms"):obj>/', auth='public')
+    @http.route('/room_management/room_management/objects/<model("room_management.room_management"):obj>/', auth='public')
     def object(self, obj, **kw):
-        return http.request.render('hotel_rooms.object', {
+        return http.request.render('room_management.object', {
             'object': obj
         })

@@ -1,31 +1,33 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "hotel_rooms",
+    'name': "room_management",
 
     'summary': """
-        Hotel Rooms Management""",
+        Short (1 phrase/line) summary of the module's purpose, used as
+        subtitle on modules listing or apps.openerp.com""",
 
     'description': """
-        User can create and manage hotel rooms
+        Long description of module's purpose
     """,
 
-    'author': "Sreerag",
-    'website': "http://cheer-g.github.io",
+    'author': "My Company",
+    'website': "http://www.yourcompany.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Tools',
-    'version': '1.0',
+    'category': 'Uncategorized',
+    'version': '0.1',
 
     # any module necessary for this one to work correctly
     'depends': ['base'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/accommodation.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hotel_rooms_hotel_rooms,hotel_rooms.hotel_rooms,model_hotel_rooms_hotel_rooms,base.group_user,1,1,1,1
+access_room_management_room_management,room_management.room_management,model_room_management_room_management,base.group_user,1,1,1,0

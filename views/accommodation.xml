@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+
+<!--        Explicit view definition-->
+
+        <record model="ir.ui.view" id="room_accommodation">
+            <field name="name">Accommodation</field>
+            <field name="model">room_management.accommodation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group colspan="4">
+                        <group col="2">
+                            <field name="ref_no"/>
+                            <field name="guest"/>
+                            <field name="guest_count"/>
+                            <field name="check_in"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+<!--        action opening views on models-->
+        <record model="ir.actions.act_window" id="room_management.acc_window">
+          <field name="name">New Accommodation</field>
+          <field name="res_model">room_management.accommodation</field>
+          <field name="view_mode">tree,form</field>
+        </record>
+
+<!--        menu-->
+        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>
+        <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception" action="room_management.acc_window"/>
+    </data>
+</odoo>
