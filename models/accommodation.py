@@ -8,14 +8,19 @@ class Accommodation(models.Model):
     _description = 'room_accommodation'
 
     seq_no = fields.Char(string="Reference No.", required="True", readonly="True", copy="False",
-                         index="True", default=lambda self: ('New'))
-    guest = fields.Many2one('res.partners', 'Guests')
+                         index="True", default=lambda self: 'New')
+    guest = fields.Many2one(
+        'res.partner', string='Guests', readonly=False,
+        required=True, change_default=True, index=True, tracking=1)
+    guest_address = fields.Many2one(
+        'res.partner', string='Address', required=True)
     guest_count = fields.Integer(required="True")
     check_in = fields.Datetime()
     check_out = fields.Datetime()
     bed = fields.Selection(selection=[('single', 'Single'), ('double', 'Double'), ('dorm', 'Dormitory')])
     facilities = fields.Text()
-    room_no = fields.Many2one('room.management')
+    room_no = fields.Many2one('room.management',
+                              string="Room", required="True", change_default="True")
     state = fields.Selection([
         ('draft', 'Draft'),
         ('checkin', 'Check-In'),
@@ -25,8 +30,8 @@ class Accommodation(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('seq_no', ('New')) == ('New'):
-            vals['seq_no'] = self.env['ir.sequence'].next_by_code('acc.seq') or ('New')
+        if vals.get('seq_no', 'New') == 'New':
+            vals['seq_no'] = self.env['ir.sequence'].next_by_code('acc.seq') or 'New'
         result = super(Accommodation, self).create(vals)
         return result
 

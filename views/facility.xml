@@ -1,0 +1,26 @@
+<odoo>
+    <data>
+<!--        View Definition-->
+
+        <record model="ir.ui.view" id="room_management.facilities">
+            <field name="name">Facilities</field>
+            <field name="model">room.facilities</field>
+<!--            <field name="arch" type="xml">-->
+<!--&lt;!&ndash;                <tree editable="top">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <field name="facility"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                </tree>&ndash;&gt;-->
+<!--            </field>-->
+        </record>
+
+<!--        Action-->
+<!--        <record model="ir.actions.act_window" id="facility.tree">-->
+<!--            <field name="name">Edit facility</field>-->
+<!--            <field name="res_model">room.facilities</field>-->
+<!--&lt;!&ndash;            <field name="view_mode">tree</field>&ndash;&gt;-->
+<!--        </record>-->
+
+<!--        Menu-->
+
+        <menuitem name="Facilities" id="room_management.facility" parent="room_management.config"/>
+    </data>
+</odoo>

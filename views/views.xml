@@ -2,23 +2,6 @@
   <data>
     <!-- explicit list view definition -->
 
-<!--    <record model="ir.ui.view" id="room_accommodation">-->
-<!--      <field name="name">Accommodation</field>-->
-<!--      <field name="model">room_management.accommodation</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <form>-->
-<!--                <group colspan="4">-->
-<!--                    <group col="2">-->
-<!--                        <field name="ref_no"/>-->
-<!--                        <field name="guest"/>-->
-<!--                        <field name="guest_count"/>-->
-<!--                        <field name="check_in"/>-->
-<!--                    </group>-->
-<!--                </group>-->
-<!--            </form>-->
-<!--        </field>-->
-<!--    </record>-->
-
     <record model="ir.ui.view" id="room_management.form">
       <field name="name">Create Room</field>
       <field name="model">room.management</field>
@@ -31,7 +14,6 @@
             </group>
             <group col="2">
               <field name="total_bed" attrs="{'invisible' : ['|',('bed','=','single'), ('bed','=','double')]}"/>
-              <field name="facilities" widget="many2many_tags"/>
               <field name="rent" widget="monetary" options="{'currency_field': %(base.europe)d}"/>
             </group>
           </group>
@@ -40,52 +22,32 @@
     </record>
 
 
-
     <record model="ir.ui.view" id="room_management.tree">
       <field name="name">View rooms</field>
       <field name="model">room.management</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="room_no" required="True"/>
-          <field name="bed" required="True"/>
-          <field name="total_bed"/>
-          <field name="facilities"/>
+          <field name="room_no"/>
+          <field name="bed"/>
+<!--          <field name="facilities"/>-->
           <field name="rent"/>
         </tree>
       </field>
     </record>
 
-<!--    <record model="ir.ui.view" id="room_management.acc_form">-->
-<!--      <field name="name">Accommodation</field>-->
-<!--      <field name="model">room_management.accommodation</field>-->
-<!--      <field name="arch" type="xml">-->
-<!--        <form>-->
-<!--          <group colspan="4">-->
-<!--            <group colspan="2" >-->
-<!--              <field name="ref_no" required="True"/>-->
-<!--              <field name="guest" required="True"/>-->
-<!--              <field name="guest_count"/>-->
-<!--              <field name="bed" required="True"/>-->
-<!--            </group>-->
-<!--            <group colspan="2">-->
-<!--              <field name="check_in"/>-->
-<!--              <field name="check_out"/>-->
-<!--              <field name="facilities"/>-->
-<!--              <field name="room_no"/>-->
-<!--            </group>-->
-<!--          </group>-->
-<!--        </form>-->
-<!--      </field>-->
-<!--    </record>-->
+<!--    <record model="ir.ui.view" id="room_management.facilities">-->
+<!--        <field name="name">Facilities</field>-->
+<!--        <field name="model">room.facilities</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree editable="top">-->
+<!--                <field name="facility_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Facilities"/>-->
+<!--            </tree>-->
+<!--        </field>-->
+<!--     </record>-->
 
 
     <!-- actions opening views on models -->
 
-<!--    <record model="ir.actions.act_window" id="room_management.acc_window">-->
-<!--      <field name="name">Accommodation</field>-->
-<!--      <field name="res_model">room.management</field>-->
-<!--      <field name="view_mode">form</field>-->
-<!--    </record>-->
 
     <record model="ir.actions.act_window" id="room_management.action_window">
       <field name="name">View Room</field>
@@ -93,55 +55,31 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-<!--    <record model="ir.actions.act_window" id="room_management.room_window">-->
-<!--      <field name="name">Create Rooms</field>-->
-<!--      <field name="res_model">room.management</field>-->
-<!--      <field name="view_mode">tree,form</field>-->
+
+<!--    <record model="ir.actions.act_window" id="facility.tree">-->
+<!--      <field name="name">Edit facility</field>-->
+<!--      <field name="res_model">room.facilities</field>-->
+<!--      <field name="view_mode">tree</field>-->
 <!--    </record>-->
-
-<!--    <record model="ir.actions.act_window" id="room_management.acc">-->
-<!--      <field name="name">Accommodation</field>-->
-<!--      <field name="res_model">room_management.accommodation</field>-->
-<!--      <field name="view_mode">form</field>-->
-<!--    </record>-->
-
-
-
 
     <!-- server action to the one above -->
 
-<!--    <record model="ir.actions.server" id="room_management.action_server">-->
-<!--      <field name="name">room_management server</field>-->
-<!--      <field name="model_id" ref="model_room_management_room_management"/>-->
-<!--      <field name="state">code</field>-->
-<!--      <field name="code">-->
-<!--        action = {-->
-<!--          "type": "ir.actions.act_window",-->
-<!--          "view_mode": "tree,form",-->
-<!--          "res_model": model._name,-->
-<!--        }-->
-<!--      </field>-->
-<!--    </record>-->
 
 
     <!-- Top menu item -->
 
-    <menuitem name="Room Management" id="room_management.menu_root"/>
+
 
     <!-- menu categories -->
 
-<!--    <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>-->
-    <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root" sequence="2" />
+    <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root" />
 
     <!-- actions -->
 
     <menuitem name="Rooms" id="room_management.config_rooms" parent="room_management.config"
-              action="room_management.action_window"/>
-<!--    <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception"-->
-<!--              action="room_management.acc_window"/>-->
+              action="room_management.action_window"  />
+<!--    <menuitem name="Facilities" id="room_management.facility" parent="room_management.config"/>-->
 
-<!--    <menuitem name="Server to list" id="room_management" parent="room_management.menu_2"-->
-<!--              action="room_management.action_server"/>-->
 
   </data>
 </odoo>

@@ -21,10 +21,17 @@
                                     <field name="seq_no" readonly="1"/>
                                 </h1>
                             </div>
-                            <field name="guest"/>
+                            <field name="guest" widget="res_partner_many2one"
+                                   context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                                   options='{"always_reload": True}'/>
+                            <field name="guest_address" widget="res_partner_many2one"
+                                   context="{'default_type':'invoice'}"/>
                             <field name="guest_count"/>
+                        </group>
+                        <group>
                             <field name="check_in"/>
-                            <field name="room_no"/>
+                            <field name="room_no"  widget="selection"/>
+                            <field name="bed"/>
                         </group>
                     </group>
                 </form>
@@ -51,15 +58,16 @@
           <field name="res_model">room_management.accommodation</field>
           <field name="view_mode">tree,form</field>
         </record>
-        <record model="ir.actions.act_window" id="room_management.acc_list">
-          <field name="name">Accommodations</field>
-          <field name="res_model">room_management.accommodation</field>
-          <field name="view_mode">tree,form</field>
-        </record>
+<!--        <record model="ir.actions.act_window" id="room_management.acc_list">-->
+<!--          <field name="name">Accommodations</field>-->
+<!--          <field name="res_model">room_management.accommodation</field>-->
+<!--          <field name="view_mode">tree,form</field>-->
+<!--        </record>-->
 
 
 <!--        menu-->
-        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" action="room_management.acc_list" sequence="1"/>
+        <menuitem name="Hotel Room Management" id="room_management.menu_root"/>
+        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>
         <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception" action="room_management.acc_window"/>
     </data>
 </odoo>

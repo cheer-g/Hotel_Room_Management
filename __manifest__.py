@@ -27,6 +27,7 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/facility.xml',
         'views/accommodation.xml',
         'data/sequence.xml'
     ],
