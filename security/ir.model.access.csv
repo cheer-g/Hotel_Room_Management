@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_room_management_room_management,room_management.room_management,model_room_management_room_management,base.group_user,1,1,1,0
+hotel_manager_acc,hotel accommodation,model_room_management_accommodation,group_manager,1,1,1,1
+hotel_manager,hotel manager,model_room_management,group_manager,1,1,1,1
+hotel_manager_facilities,hotel facilities,model_room_management_facilities,group_manager,1,1,1,1
+

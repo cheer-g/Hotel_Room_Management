@@ -1,0 +1,5 @@
+<odoo>
+    <record id="group_manager" model="res.groups">
+        <field name="name">Hotel Manager</field>
+    </record>
+</odoo>

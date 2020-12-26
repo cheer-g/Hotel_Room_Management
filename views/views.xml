@@ -1,5 +1,5 @@
 <odoo>
-  <data>
+<!--  <data>-->
     <!-- explicit list view definition -->
 
     <record model="ir.ui.view" id="room_management.form">
@@ -14,12 +14,24 @@
             </group>
             <group col="2">
               <field name="total_bed" attrs="{'invisible' : ['|',('bed','=','single'), ('bed','=','double')]}"/>
-              <field name="rent" widget="monetary" options="{'currency_field': %(base.europe)d}"/>
+              <field name="facility" widget="many2many_tags"/>
+              <field name="rent" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
             </group>
           </group>
         </form>
       </field>
     </record>
+
+<!--    <record model="ir.ui.view" id="room.facilities">-->
+<!--      <field name="name">View Facilities</field>-->
+<!--      <field name="model">room.management</field>-->
+<!--      <field name="arch" type="xml">-->
+<!--        <tree>-->
+<!--          <field name="facilities"/>-->
+<!--        </tree>-->
+<!--      </field>-->
+<!--    </record>-->
 
 
     <record model="ir.ui.view" id="room_management.tree">
@@ -29,7 +41,7 @@
         <tree>
           <field name="room_no"/>
           <field name="bed"/>
-<!--          <field name="facilities"/>-->
+          <field name="facility" widget="many2many_tags"/>
           <field name="rent"/>
         </tree>
       </field>
@@ -48,7 +60,11 @@
 
     <!-- actions opening views on models -->
 
-
+<!--    <record name="ir.actions.act_window" id="room.facilities">-->
+<!--      <field name="name">View Facilities</field>-->
+<!--      <field name="res_model">room_management.facilities</field>-->
+<!--      <field name="view_mode">tree</field>-->
+<!--    </record>-->
     <record model="ir.actions.act_window" id="room_management.action_window">
       <field name="name">View Room</field>
       <field name="res_model">room.management</field>
@@ -72,14 +88,14 @@
 
     <!-- menu categories -->
 
-    <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root" />
+    <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root"/>
 
     <!-- actions -->
 
     <menuitem name="Rooms" id="room_management.config_rooms" parent="room_management.config"
-              action="room_management.action_window"  />
-<!--    <menuitem name="Facilities" id="room_management.facility" parent="room_management.config"/>-->
+              action="room_management.action_window"/>
+<!--    <menuitem name="Facilities" id="room_facilities" parent="room_management.config" action="room.facilities"/>-->
 
 
-  </data>
+<!--  </data>-->
 </odoo>

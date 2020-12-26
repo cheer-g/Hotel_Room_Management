@@ -14,7 +14,7 @@
                         <button name="action_cancel" type="object" string="Cancel" class="oe_highlight" states="checkin"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,checkin,checkout"/>
                     </header>
-                    <group colspan="4">
+                    <group colspan="2">
                         <group col="2">
                             <div class="oe_title">
                                 <h1>
@@ -28,9 +28,11 @@
                                    context="{'default_type':'invoice'}"/>
                             <field name="guest_count"/>
                         </group>
-                        <group>
-                            <field name="check_in"/>
+                        <group col="1">
                             <field name="room_no"  widget="selection"/>
+                            <field name="check_in"/>
+                            <field name="check_out"/>
+                            <field name="facilities" widget="many2many_tags" options="{'no_create_edit': True, 'no_create': True}"/>
                             <field name="bed"/>
                         </group>
                     </group>
@@ -47,7 +49,7 @@
                     <field name="guest"/>
                     <field name="room_no"/>
                     <field name="state"/>
-                    <field name="bed"/>
+                    <field name="bed" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -67,7 +69,9 @@
 
 <!--        menu-->
         <menuitem name="Hotel Room Management" id="room_management.menu_root"/>
-        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root" sequence="1"/>
-        <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception" action="room_management.acc_window"/>
+        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root"
+                  sequence="1"/>
+        <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception"
+                  action="room_management.acc_window"/>
     </data>
 </odoo>

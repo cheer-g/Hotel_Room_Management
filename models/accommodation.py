@@ -6,7 +6,10 @@ from odoo import models, fields, api
 class Accommodation(models.Model):
     _name = 'room_management.accommodation'
     _description = 'room_accommodation'
+    _rec_name = 'seq_no'
+    # _inherit = 'res.partner'
 
+    is_invoice_contact = fields.Boolean("Is Invoice contact?")
     seq_no = fields.Char(string="Reference No.", required="True", readonly="True", copy="False",
                          index="True", default=lambda self: 'New')
     guest = fields.Many2one(
@@ -18,7 +21,7 @@ class Accommodation(models.Model):
     check_in = fields.Datetime()
     check_out = fields.Datetime()
     bed = fields.Selection(selection=[('single', 'Single'), ('double', 'Double'), ('dorm', 'Dormitory')])
-    facilities = fields.Text()
+    facilities = fields.Many2many('room_management.facilities', string="Facilities")
     room_no = fields.Many2one('room.management',
                               string="Room", required="True", change_default="True")
     state = fields.Selection([
