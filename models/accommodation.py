@@ -31,6 +31,18 @@ class Accommodation(models.Model):
         ('cancel', 'Cancelled')
     ], string="Status", readonly="True", default="draft")
 
+    @api.onchange('guest')
+    def onchange_guest(self):
+        for rec in self:
+            print("Output check : ", rec.guest.street)
+            return {'domain': {'guest_address': [('id', '=', rec.guest.id)]}}
+
+    @api.onchange('room_no')
+    def onchange_room_no(self):
+        for rec in self:
+            print("Output check 2: ", rec.room_no.room_no)
+            return {'domain': {'facilities': [('room_no', '=', rec.room_no.room_no)]}}
+
     @api.model
     def create(self, vals):
         if vals.get('seq_no', 'New') == 'New':

@@ -8,6 +8,7 @@
            <field name="arch" type="xml">
                <tree editable="top">
                    <field name="facility_name"/>
+                   <field name="room_no" widget="many2many_tags"/>
                </tree>
            </field>
        </record>

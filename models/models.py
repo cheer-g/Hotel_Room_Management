@@ -14,8 +14,8 @@ class RoomManagement(models.Model):
     total_bed = fields.Integer()
     facility = fields.Many2many('room_management.facilities', string="Facilities")
     currency_id = fields.Many2one(
-        'res.currency', string='Currency')
-    rent = fields.Monetary('Rent', currency_field='currency_id')
+        'res.currency', string='Currency', default=lambda self: self.env.user.company_id.currency_id.id, required=True)
+    rent = fields.Monetary(string="Rent")
 
     # @api.depends('value')
     # def _value_pc(self):
