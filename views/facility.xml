@@ -4,7 +4,7 @@
 
        <record model="ir.ui.view" id="room_management_facilities">
            <field name="name">View Facilities</field>
-           <field name="model">room_management.facilities</field>
+           <field name="model">room.facilities</field>
            <field name="arch" type="xml">
                <tree editable="top">
                    <field name="facility_name"/>
@@ -16,7 +16,7 @@
 <!--        Action-->
         <record model="ir.actions.act_window" id="facility_tree_view">
             <field name="name">Edit facility</field>
-            <field name="res_model">room_management.facilities</field>
+            <field name="res_model">room.facilities</field>
             <field name="view_mode">tree</field>
         </record>
 

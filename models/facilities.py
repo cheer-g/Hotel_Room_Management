@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from random import randint
 from odoo import models, fields
 
 
 class RoomFacilities(models.Model):
-    _name = 'room_management.facilities'
+    _name = 'room.facilities'
     _description = 'Room facilities'
     _rec_name = 'facility_name'
 

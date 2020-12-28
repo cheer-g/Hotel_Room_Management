@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "room_management",
+    'name': "Hotel Room Management",
 
     'summary': """
         Manage rooms and record accommodations for a Hotel""",
@@ -32,7 +32,4 @@
         'data/sequence.xml'
     ],
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
 }

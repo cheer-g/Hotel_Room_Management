@@ -5,7 +5,7 @@
 
         <record model="ir.ui.view" id="room_accommodation">
             <field name="name">Accommodation</field>
-            <field name="model">room_management.accommodation</field>
+            <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
                 <form string="Accommodation">
                     <header>
@@ -14,36 +14,48 @@
                         <button name="action_cancel" type="object" string="Cancel" class="oe_highlight" states="checkin"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,checkin,checkout"/>
                     </header>
-                    <group colspan="2">
-                        <group col="2">
-                            <div class="oe_title">
-                                <h1>
-                                    <field name="seq_no" readonly="1"/>
-                                </h1>
-                            </div>
-                            <field name="guest" widget="res_partner_many2one"
-                                   context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
-                                   options='{"always_reload": True}'/>
-                            <field name="guest_address" context="{'default_type':'invoice'}"
-                                   options='{"always_reload": True}'/>
-                            <field name="address_proof"/>
-                            <field name="guest_count"/>
+                    <sheet>
+                        <group colspan="2">
+                            <group col="2">
+                                <div class="oe_title">
+                                    <h1>
+                                        <field name="seq_no" readonly="1"/>
+                                    </h1>
+                                </div>
+                                <field name="guest" widget="res_partner_many2one"
+                                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                                       options='{"always_reload": True}'/>
+                                <field name="address_proof"/>
+                                <field name="guest_count"/>
+                            </group>
+                            <group col="1">
+                                <field name="bed"/>
+                                <field name="room_no"  widget="selection"/>
+                                <field name="facilities" widget="many2many_tags" options="{'no_create_edit': True, 'no_create': True}"/>
+                                <field name="expected_days"/>
+                                <field name="expected_date"/>
+                                <field name="check_in"/>
+                                <field name="check_out"/>
+                            </group>
                         </group>
-                        <group col="1">
-                            <field name="room_no"  widget="selection"/>
-                            <field name="check_in"/>
-                            <field name="check_out"/>
-                            <field name="facilities" widget="many2many_tags" options="{'no_create_edit': True, 'no_create': True}"/>
-                            <field name="bed"/>
-                        </group>
-                    </group>
+                        <notebook>
+                            <page string="Guests" name="guests">
+<!--                                <field name="model">room.guests</field>-->
+<!--                                    <tree editable="bottom">-->
+<!--                                        <field name="add_guest_name"/>-->
+<!--                                        <field name="add_guest_gender"/>-->
+<!--                                        <field name="add_guest_age"/>-->
+<!--                                    </tree>-->
+                            </page>
+                        </notebook>
+                    </sheet>
                 </form>
             </field>
         </record>
 
         <record model="ir.ui.view" id="room_accommodation_tree">
             <field name="name">View Accommodations</field>
-            <field name="model">room_management.accommodation</field>
+            <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="seq_no" readonly="1"/>
@@ -58,7 +70,7 @@
 <!--        action opening views on models-->
         <record model="ir.actions.act_window" id="room_management.acc_window">
           <field name="name">New Accommodation</field>
-          <field name="res_model">room_management.accommodation</field>
+          <field name="res_model">room.accommodation</field>
           <field name="view_mode">tree,form</field>
         </record>
 <!--        <record model="ir.actions.act_window" id="room_management.acc_list">-->

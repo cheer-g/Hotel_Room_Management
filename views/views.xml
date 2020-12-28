@@ -1,5 +1,4 @@
 <odoo>
-<!--  <data>-->
     <!-- explicit list view definition -->
 
     <record model="ir.ui.view" id="room_management.form">
@@ -7,32 +6,23 @@
       <field name="model">room.management</field>
       <field name="arch" type="xml">
         <form>
-          <group colspan="4">
-            <group col="2">
-              <field name="room_no" required="True"/>
-              <field name="bed" required="True"/>
-            </group>
-            <group col="2">
-              <field name="currency_id" invisible="1"/>
-              <field name="total_bed" attrs="{'invisible' : ['|',('bed','=','single'), ('bed','=','double')]}"/>
-              <field name="facility" widget="many2many_tags"/>
-              <field name="rent" widget="monetary"/>
-            </group>
-          </group>
+          <sheet>
+              <group colspan="4">
+                <group col="2">
+                  <field name="room_no" required="True"/>
+                  <field name="bed" required="True"/>
+                  <field name="total_bed" attrs="{'invisible' : ['|', ('bed','=','single'), ('bed','=','double')]}"/>
+                </group>
+                <group col="2">
+                  <field name="currency_id" invisible="1"/>
+                  <field name="facility" widget="many2many_tags"/>
+                  <field name="rent" widget="monetary"/>
+                </group>
+              </group>
+          </sheet>
         </form>
       </field>
     </record>
-
-<!--    <record model="ir.ui.view" id="room.facilities">-->
-<!--      <field name="name">View Facilities</field>-->
-<!--      <field name="model">room.management</field>-->
-<!--      <field name="arch" type="xml">-->
-<!--        <tree>-->
-<!--          <field name="facilities"/>-->
-<!--        </tree>-->
-<!--      </field>-->
-<!--    </record>-->
-
 
     <record model="ir.ui.view" id="room_management.tree">
       <field name="name">View rooms</field>
@@ -48,44 +38,13 @@
       </field>
     </record>
 
-<!--    <record model="ir.ui.view" id="room_management.facilities">-->
-<!--        <field name="name">Facilities</field>-->
-<!--        <field name="model">room.facilities</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <tree editable="top">-->
-<!--                <field name="facility_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" placeholder="Facilities"/>-->
-<!--            </tree>-->
-<!--        </field>-->
-<!--     </record>-->
-
-
     <!-- actions opening views on models -->
 
-<!--    <record name="ir.actions.act_window" id="room.facilities">-->
-<!--      <field name="name">View Facilities</field>-->
-<!--      <field name="res_model">room_management.facilities</field>-->
-<!--      <field name="view_mode">tree</field>-->
-<!--    </record>-->
     <record model="ir.actions.act_window" id="room_management.action_window">
       <field name="name">View Room</field>
       <field name="res_model">room.management</field>
       <field name="view_mode">tree,form</field>
     </record>
-
-
-<!--    <record model="ir.actions.act_window" id="facility.tree">-->
-<!--      <field name="name">Edit facility</field>-->
-<!--      <field name="res_model">room.facilities</field>-->
-<!--      <field name="view_mode">tree</field>-->
-<!--    </record>-->
-
-    <!-- server action to the one above -->
-
-
-
-    <!-- Top menu item -->
-
-
 
     <!-- menu categories -->
 
@@ -95,8 +54,5 @@
 
     <menuitem name="Rooms" id="room_management.config_rooms" parent="room_management.config"
               action="room_management.action_window"/>
-<!--    <menuitem name="Facilities" id="room_facilities" parent="room_management.config" action="room.facilities"/>-->
 
-
-<!--  </data>-->
 </odoo>
