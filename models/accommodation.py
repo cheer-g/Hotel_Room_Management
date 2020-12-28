@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-
+import datetime
 
 class Accommodation(models.Model):
     _name = 'room_management.accommodation'
@@ -17,6 +17,7 @@ class Accommodation(models.Model):
         required=True, change_default=True, index=True, tracking=1)
     guest_address = fields.Many2one(
         'res.partner', string='Address', required=True)
+    address_proof = fields.Binary('Address Proof')
     guest_count = fields.Integer(required="True")
     check_in = fields.Datetime()
     check_out = fields.Datetime()
@@ -53,10 +54,12 @@ class Accommodation(models.Model):
     def action_confirm(self):
         for rec in self:
             rec.state = 'checkin'
+            self.check_in = fields.Datetime.now()
 
     def action_checkout(self):
         for rec in self:
             rec.state = 'checkout'
+            self.check_out = fields.Datetime.now()
 
     def action_cancel(self):
         for rec in self:

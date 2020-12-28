@@ -26,6 +26,7 @@
                                    options='{"always_reload": True}'/>
                             <field name="guest_address" context="{'default_type':'invoice'}"
                                    options='{"always_reload": True}'/>
+                            <field name="address_proof"/>
                             <field name="guest_count"/>
                         </group>
                         <group col="1">
