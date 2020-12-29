@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-"""
- Model for Accommodation view
-"""
 import datetime
 from odoo import models, fields, api
 
 
 class Accommodation(models.Model):
     _name = 'room.accommodation'
-    _description = 'room_accommodation'
+    _description = 'room accommodation'
     _rec_name = 'seq_no'
 
     seq_no = fields.Char(string="Sequence No.", required="True",
@@ -44,15 +41,15 @@ class Accommodation(models.Model):
         ('cancel', 'Cancelled')
     ], string="Status", readonly="True", default="draft")
 
-    # For displaying facilities according to the room number
+    # For displaying room number based on Bed type and Facilities
     @api.onchange('facilities')
-    def onchange_room_no(self):
+    def onchange_facilities(self):
         for rec in self:
-            print("Required Facilities: ", self.facilities.facility_name)
-            print("Test : ", self.room_no.facility)
+            print("Out : ", rec.facilities.ids)
             return {'domain': {'room_no': [
-                ('facility', '=',
-                 self.facilities.facility_name), ('available', '=', 'True')]}}
+                ('id', 'in',
+                 rec.facilities.ids), ('available', '=', 'True'),
+                ('bed', '=', self.bed)]}}
 
     # To Generate Sequence number
     @api.model
