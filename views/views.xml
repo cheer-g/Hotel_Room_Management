@@ -6,6 +6,9 @@
       <field name="model">room.management</field>
       <field name="arch" type="xml">
         <form>
+          <header>
+              <field name="state" widget="statusbar"/>
+          </header>
           <sheet>
               <group colspan="4">
                 <group col="2">
@@ -17,7 +20,6 @@
                   <field name="currency_id" invisible="1"/>
                   <field name="facility" widget="many2many_tags"/>
                   <field name="rent" widget="monetary"/>
-                    <field name="available"/>
                 </group>
               </group>
           </sheet>

@@ -1,28 +1,31 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class Accommodation(models.Model):
     _name = 'room.accommodation'
-    _description = 'room accommodation'
+    _description = 'Room Accommodation'
+    _inherit = 'mail.thread'
     _rec_name = 'seq_no'
 
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
                          index="True", default=lambda self: 'New')
     guest = fields.Many2one(
-        'res.partner', string='Guests', readonly=False,
+        'res.partner', string='Guests',
         required=True, change_default=True, index=True, tracking=1)
-    address_proof = fields.Binary('Address Proof')
-    guest_count = fields.Integer(required="True")
+    # address_proof_ids = fields.Binary('Address Proof')
+    # address_proof_id = fields.One2many('ir.attachment', 'attach_id',
+    #                                    string="Address Proof", copy="False")
+    guest_count = fields.Integer(required="True", default="1")
     check_in = fields.Datetime(readonly="True")
     check_out = fields.Datetime(readonly="True")
     expected_days = fields.Integer(string="Expected Days")
     expected_date = fields.Date(string="Expected Date",
                                 readonly=True,
-                                compute="calc_date")
+                                compute="_compute_expected_date")
     bed = fields.Selection(selection=[('single', 'Single'),
                                       ('double', 'Double'),
                                       ('dormitory', 'Dormitory')],
@@ -31,7 +34,7 @@ class Accommodation(models.Model):
     room_no = fields.Many2one('room.management',
                               string="Room", required="True",
                               change_default="True",
-                              domain="[('available','=','True')]")
+                              domain="[('state','=','available')]")
     add_guest_ids = fields.One2many('room.guests', 'guest_ids')
     # room_no = fields.Char(compute='depends_bed')
     state = fields.Selection([
@@ -39,17 +42,18 @@ class Accommodation(models.Model):
         ('checkin', 'Check-In'),
         ('checkout', 'Check-Out'),
         ('cancel', 'Cancelled')
-    ], string="Status", readonly="True", default="draft")
+    ], string="Status", readonly="True", default="draft", tracking=1,
+        tracking_visibility='always')
 
     # For displaying room number based on Bed type and Facilities
     @api.onchange('facilities')
     def onchange_facilities(self):
         for rec in self:
             print("Out : ", rec.facilities.ids)
-            return {'domain': {'room_no': [
-                ('id', 'in',
-                 rec.facilities.ids), ('available', '=', 'True'),
-                ('bed', '=', self.bed)]}}
+            return {'domain': {'room_no': [('bed', '=', self.bed),
+                                           ('facility.id', 'in',
+                                            rec.facilities.ids),
+                                           ('state', '=', 'available')]}}
 
     # To Generate Sequence number
     @api.model
@@ -61,27 +65,38 @@ class Accommodation(models.Model):
         return result
 
     @api.onchange('expected_days')
-    def calc_date(self):
+    def _compute_expected_date(self):
         today = fields.Date.today()
         self.expected_date = today + datetime.timedelta(
             days=self.expected_days)
 
     # Change state to checkin and update check_in field using Confirm button
-    def action_confirm(self):
+    def action_checkin(self):
         for rec in self:
-            self.room_no.available = False
-            rec.state = 'checkin'
-            self.check_in = fields.Datetime.now()
+            guest_count_list = 1 + len(self.add_guest_ids.ids)
+            if guest_count_list == rec.guest_count:
+                self.room_no.state = 'not-available'
+                self.check_in = fields.Datetime.now()
+                rec.state = 'checkin'
+            else:
+                rec.state = 'draft'
+                print('Please provide all guests details')
+                warning = {
+                    'title': _('Guest count mismatch'),
+                    'message': _('Please provide all guests details'),
+                }
+                return {'warning': warning}
 
     def action_checkout(self):
         for rec in self:
-            self.room_no.available = True
+            self.room_no.state = 'available'
             rec.state = 'checkout'
             self.check_out = fields.Datetime.now()
 
     def action_cancel(self):
         for rec in self:
             rec.state = 'cancel'
+            self.room_no.state = 'available'
 
 
 class AdditionalGuests(models.Model):
@@ -90,9 +105,16 @@ class AdditionalGuests(models.Model):
     _rec_name = 'add_guest_name'
 
     guest_ids = fields.Many2one('room.accommodation')
-    add_guest_name = fields.Char(string="Guest Name")
+    add_guest_name = fields.Char(string="Guest Name", required="True")
     add_guest_gender = fields.Selection(selection=[('male', 'Male'),
                                                    ('female', 'Female'),
                                                    ('other', 'Other')],
                                         string='Gender')
     add_guest_age = fields.Integer(string="Age")
+
+
+# class Attachment(models.Model):
+#     _inherit = 'ir.attachment'
+#
+#     attach_id = fields.Many2one('room.accommodation',
+#                                 string="Attachment", invisible=1)
