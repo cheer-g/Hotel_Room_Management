@@ -33,8 +33,9 @@ class Accommodation(models.Model):
     facilities = fields.Many2many('room.facilities', string="Facilities")
     room_no = fields.Many2one('room.management',
                               string="Room", required="True",
-                              change_default="True")
-    add_guests = fields.One2many('room.guests', 'add_guest_name')
+                              change_default="True",
+                              domain="[('available','=','True')]")
+    add_guest_ids = fields.One2many('room.guests', 'guest_ids')
     # room_no = fields.Char(compute='depends_bed')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -44,20 +45,14 @@ class Accommodation(models.Model):
     ], string="Status", readonly="True", default="draft")
 
     # For displaying facilities according to the room number
-    @api.onchange('room_no')
+    @api.onchange('facilities')
     def onchange_room_no(self):
         for rec in self:
-            print("Output check 2: ", rec.room_no.room_no)
-            return {'domain': {'facilities': [
-                ('room_no.room_no', '=', rec.room_no.room_no)]}}
-
-    # @api.depends('bed')
-    # def depends_bed(self):
-    #     print("Bed type: ", self.bed)
-    #     room_no = fields.Many2one('room.management',
-    #                               string="Room", required="True",
-    #                               change_default="True",
-    #                               domain="[('bed', '=', self.bed)]")
+            print("Required Facilities: ", self.facilities.facility_name)
+            print("Test : ", self.room_no.facility)
+            return {'domain': {'room_no': [
+                ('facility', '=',
+                 self.facilities.facility_name), ('available', '=', 'True')]}}
 
     # To Generate Sequence number
     @api.model
@@ -77,11 +72,13 @@ class Accommodation(models.Model):
     # Change state to checkin and update check_in field using Confirm button
     def action_confirm(self):
         for rec in self:
+            self.room_no.available = False
             rec.state = 'checkin'
             self.check_in = fields.Datetime.now()
 
     def action_checkout(self):
         for rec in self:
+            self.room_no.available = True
             rec.state = 'checkout'
             self.check_out = fields.Datetime.now()
 
@@ -95,7 +92,7 @@ class AdditionalGuests(models.Model):
     _description = 'Additional Guests'
     _rec_name = 'add_guest_name'
 
-    guests_list = fields.Many2one('room.accommodation', 'add_guests')
+    guest_ids = fields.Many2one('room.accommodation')
     add_guest_name = fields.Char(string="Guest Name")
     add_guest_gender = fields.Selection(selection=[('male', 'Male'),
                                                    ('female', 'Female'),

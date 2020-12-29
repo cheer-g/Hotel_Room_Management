@@ -17,6 +17,7 @@ class RoomManagement(models.Model):
     currency_id = fields.Many2one(
         'res.currency', string='Currency', default=lambda self: self.env.user.company_id.currency_id.id, required=True)
     rent = fields.Monetary(string="Rent")
+    available = fields.Boolean(readonly='True', default="True")
 
     _sql_constraints = [
         ('Room_no', 'unique (room_no)', 'This Room No. Already exist!')]

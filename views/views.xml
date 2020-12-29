@@ -17,6 +17,7 @@
                   <field name="currency_id" invisible="1"/>
                   <field name="facility" widget="many2many_tags"/>
                   <field name="rent" widget="monetary"/>
+                    <field name="available"/>
                 </group>
               </group>
           </sheet>

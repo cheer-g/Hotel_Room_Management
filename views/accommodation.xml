@@ -9,10 +9,17 @@
             <field name="arch" type="xml">
                 <form string="Accommodation">
                     <header>
-                        <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" states="draft"/>
-                        <button name="action_checkout" type="object" string="Check Out" class="oe_highlight" states="checkin"/>
-                        <button name="action_cancel" type="object" string="Cancel" class="oe_highlight" states="checkin"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,checkin,checkout"/>
+                        <button name="action_confirm" type="object"
+                                string="Confirm" class="oe_highlight"
+                                states="draft"/>
+                        <button name="action_checkout" type="object"
+                                string="Check Out" class="oe_highlight"
+                                states="checkin"/>
+                        <button name="action_cancel" type="object"
+                                string="Cancel" class="oe_highlight"
+                                states="checkin"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,checkin,checkout"/>
                     </header>
                     <sheet>
                         <group colspan="2">
@@ -23,29 +30,35 @@
                                     </h1>
                                 </div>
                                 <field name="guest" widget="res_partner_many2one"
-                                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                                       context="{'res_partner_search_mode': 'customer',
+                                       'show_address': 1, 'show_vat': True}"
                                        options='{"always_reload": True}'/>
                                 <field name="address_proof"/>
                                 <field name="guest_count"/>
                             </group>
                             <group col="1">
                                 <field name="bed"/>
+                                <field name="facilities" widget="many2many_tags"
+                                       options="{'no_create_edit': True, 'no_create': True}"/>
                                 <field name="room_no"  widget="selection"/>
-                                <field name="facilities" widget="many2many_tags" options="{'no_create_edit': True, 'no_create': True}"/>
-                                <field name="expected_days"/>
-                                <field name="expected_date"/>
+                                <field name="expected_days"
+                                       states="draft, checkin"/>
+                                <field name="expected_date"
+                                       states="draft, checkin"/>
                                 <field name="check_in"/>
                                 <field name="check_out"/>
                             </group>
                         </group>
                         <notebook>
                             <page string="Guests" name="guests">
-<!--                                <field name="model">room.guests</field>-->
-<!--                                    <tree editable="bottom">-->
-<!--                                        <field name="add_guest_name"/>-->
-<!--                                        <field name="add_guest_gender"/>-->
-<!--                                        <field name="add_guest_age"/>-->
-<!--                                    </tree>-->
+                                <field name="add_guest_ids">
+                                    <tree create="true" delete="true"
+                                          editable="bottom">
+                                        <field name="add_guest_name"/>
+                                        <field name="add_guest_gender"/>
+                                        <field name="add_guest_age"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -73,12 +86,6 @@
           <field name="res_model">room.accommodation</field>
           <field name="view_mode">tree,form</field>
         </record>
-<!--        <record model="ir.actions.act_window" id="room_management.acc_list">-->
-<!--          <field name="name">Accommodations</field>-->
-<!--          <field name="res_model">room_management.accommodation</field>-->
-<!--          <field name="view_mode">tree,form</field>-->
-<!--        </record>-->
-
 
 <!--        menu-->
         <menuitem name="Hotel Room Management" id="room_management.menu_root"/>
