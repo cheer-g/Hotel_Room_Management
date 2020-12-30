@@ -22,9 +22,6 @@ class Accommodation(models.Model):
     guest = fields.Many2one(
         'res.partner', string='Guests',
         required=True, change_default=True, index=True, tracking=1)
-    # address_proof_ids = fields.Binary('Address Proof')
-    # address_proof_id = fields.One2many('ir.attachment', 'attach_id',
-    #                                    string="Address Proof", copy="False")
     guest_count = fields.Integer(required="True", default="1")
     attachment_ids = fields.Many2many('ir.attachment',
                                       'address_attachment_rel', 'address_id',

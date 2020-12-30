@@ -1,7 +1,7 @@
 <odoo>
     <data>
 
-<!--        Explicit view definition-->
+<!--   Form view for Accommodation-->
 
         <record model="ir.ui.view" id="room_accommodation">
             <field name="name">Accommodation</field>
@@ -33,7 +33,6 @@
                                        context="{'res_partner_search_mode': 'customer',
                                        'show_address': 1, 'show_vat': True}"
                                        options='{"always_reload": True}'/>
-<!--                                <field name="address_proof_ids"/>-->
                                 <field name="guest_count"/>
                                 <field name="attachment_ids"
                                        widget="many2many_binary"/>
@@ -73,11 +72,13 @@
             </field>
         </record>
 
+<!--        Tree view for Accommodation-->
+
         <record model="ir.ui.view" id="room_accommodation_tree">
             <field name="name">View Accommodations</field>
             <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree  default_order="check_in desc">
                     <field name="seq_no" readonly="1"/>
                     <field name="guest"/>
                     <field name="room_no"/>
@@ -86,6 +87,8 @@
                 </tree>
             </field>
         </record>
+
+<!--        Warning wizard for Guest count mismatch-->
 
         <record id="guest_warning_wizard" model="ir.ui.view">
             <field name="name">Guest count mismatch!</field>
@@ -102,6 +105,9 @@
                 </form>
             </field>
         </record>
+
+<!--        Warning Wizard for No Address proof-->
+
         <record id="address_warning_wizard" model="ir.ui.view">
             <field name="name">Please add address proof!</field>
             <field name="model">address.warning</field>
@@ -118,17 +124,46 @@
             </field>
         </record>
 
-<!--        action opening views on models-->
+<!--        Search view for Accommodation [No cancelled entries]-->
+        <record id="state_search_view" model="ir.ui.view">
+            <field name="name">State search view</field>
+            <field name="model">room.accommodation</field>
+            <field name="arch" type="xml">
+                <search string="Active Accommodations">
+                    <field name="room_no"/>
+                    <field name="guest"/>
+                    <field name="seq_no"/>
+                    <filter string="Active"
+                            name="not_cancelled"
+                            domain="[('state', 'in', ['draft', 'checkin', 'checkout'])]"/>
+                    <filter string="Room" name="room_group"  context="{'group_by': 'room_no'}"/>
+                    <filter string="Type" name="type_group"  context="{'group_by': 'bed'}"/>
+                    <filter string="State" name="state_group"  context="{'group_by': 'state'}"/>
+                    <filter string="Check-In" name="state_checkin" domain="[('state', 'not in', ['checkout', 'draft', 'cancel'])]"/>
+<!--                    <filter string="Today" domain="[('check_out','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('check_out','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>-->
+                </search>
+            </field>
+        </record>
+
+<!-- Action for Accommodation menu-->
         <record model="ir.actions.act_window" id="room_management.acc_window">
           <field name="name">Accommodation</field>
           <field name="res_model">room.accommodation</field>
           <field name="view_mode">tree,form</field>
+          <field name="context">
+              {"search_default_not_cancelled":1,
+              }
+          </field>
         </record>
 
-<!--        menu-->
+<!--     Main   menu-->
         <menuitem name="Hotel Room Management" id="room_management.menu_root"/>
+
+<!--        Top menu-->
         <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root"
                   sequence="1"/>
+
+<!--        Submenu-->
         <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception"
                   action="room_management.acc_window"/>
     </data>

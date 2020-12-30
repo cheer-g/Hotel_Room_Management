@@ -1,5 +1,5 @@
 <odoo>
-    <!-- explicit list view definition -->
+<!--    View for Room Creation Form-->
 
     <record model="ir.ui.view" id="room_management.form">
       <field name="name">Create Room</field>
@@ -27,6 +27,8 @@
       </field>
     </record>
 
+<!--    Tree view for Rooms-->
+
     <record model="ir.ui.view" id="room_management.tree">
       <field name="name">View rooms</field>
       <field name="model">room.management</field>
@@ -41,7 +43,21 @@
       </field>
     </record>
 
-    <!-- actions opening views on models -->
+<!--    Search view for rooms-->
+
+    <record id="room_search" model="ir.ui.view">
+        <field name="name">Room filters</field>
+        <field name="model">room.management</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="Available rooms" name="available_rooms"
+                        domain="[('state', '=', 'available')]"/>
+                <filter string="Type" name="bed_type" context="{'group_by':'bed'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- actions for Rooms menu -->
 
     <record model="ir.actions.act_window" id="room_management.action_window">
       <field name="name">View Room</field>
@@ -49,11 +65,11 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <!-- menu categories -->
+    <!-- top menu -->
 
     <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root"/>
 
-    <!-- actions -->
+    <!-- submenu -->
 
     <menuitem name="Rooms" id="room_management.config_rooms" parent="room_management.config"
               action="room_management.action_window"/>
