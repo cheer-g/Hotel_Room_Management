@@ -3,3 +3,5 @@ hotel_manager_acc,hotel accommodation,model_room_accommodation,base.group_user,1
 hotel_manager,hotel manager,model_room_management,base.group_user,1,1,1,1
 hotel_manager_facilities,hotel facilities,model_room_facilities,base.group_user,1,1,1,1
 hotel_manager_guests,hotel guests,model_room_guests,base.group_user,1,1,1,1
+hotel_guest_warning, Guest warning,model_guest_count_warning,base.group_user,1,1,1,1
+hotel_address_warning, Address warning,model_address_warning,base.group_user,1,1,1,1

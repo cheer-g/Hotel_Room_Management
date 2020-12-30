@@ -1,10 +1,16 @@
+"""
+Model for the accommodation view
+"""
 # -*- coding: utf-8 -*-
 
 import datetime
-from odoo import models, fields, api, _
+from odoo import models, fields, api
 
 
 class Accommodation(models.Model):
+    """
+    Class for the Accommodation view
+    """
     _name = 'room.accommodation'
     _description = 'Room Accommodation'
     _inherit = 'mail.thread'
@@ -20,6 +26,9 @@ class Accommodation(models.Model):
     # address_proof_id = fields.One2many('ir.attachment', 'attach_id',
     #                                    string="Address Proof", copy="False")
     guest_count = fields.Integer(required="True", default="1")
+    attachment_ids = fields.Many2many('ir.attachment',
+                                      'address_attachment_rel', 'address_id',
+                                      'attachment_id', string='Attachments')
     check_in = fields.Datetime(readonly="True")
     check_out = fields.Datetime(readonly="True")
     expected_days = fields.Integer(string="Expected Days")
@@ -36,18 +45,20 @@ class Accommodation(models.Model):
                               change_default="True",
                               domain="[('state','=','available')]")
     add_guest_ids = fields.One2many('room.guests', 'guest_ids')
-    # room_no = fields.Char(compute='depends_bed')
     state = fields.Selection([
         ('draft', 'Draft'),
         ('checkin', 'Check-In'),
         ('checkout', 'Check-Out'),
         ('cancel', 'Cancelled')
-    ], string="Status", readonly="True", default="draft", tracking=1,
-        tracking_visibility='always')
+    ], string="Status", readonly="True",
+       default="draft", tracking=1, tracking_visibility='always')
 
-    # For displaying room number based on Bed type and Facilities
     @api.onchange('facilities')
     def onchange_facilities(self):
+        """
+        For displaying room number based on Bed type and Facilities
+
+        """
         for rec in self:
             print("Out : ", rec.facilities.ids)
             return {'domain': {'room_no': [('bed', '=', self.bed),
@@ -55,9 +66,11 @@ class Accommodation(models.Model):
                                             rec.facilities.ids),
                                            ('state', '=', 'available')]}}
 
-    # To Generate Sequence number
     @api.model
     def create(self, vals):
+        """
+        To Generate Sequence number
+        """
         if vals.get('seq_no', 'New') == 'New':
             vals['seq_no'] = self.env['ir.sequence'].next_by_code(
                 'acc.seq') or 'New'
@@ -66,14 +79,31 @@ class Accommodation(models.Model):
 
     @api.onchange('expected_days')
     def _compute_expected_date(self):
+        """
+         Computing expected date based on expected days
+        """
         today = fields.Date.today()
         self.expected_date = today + datetime.timedelta(
             days=self.expected_days)
 
-    # Change state to checkin and update check_in field using Confirm button
     def action_checkin(self):
+        """
+         Change state to checkin and update check_in field using Confirm button
+        """
         for rec in self:
             guest_count_list = 1 + len(self.add_guest_ids.ids)
+            if not self.attachment_ids:
+                rec.state = 'draft'
+                print("Add address proof")
+                warning = {
+                    'name': 'No address proof found !',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'address.warning',
+                    'view_mode': 'form',
+                    'view_type': 'form',
+                    'target': 'new'
+                }
+                return warning
             if guest_count_list == rec.guest_count:
                 self.room_no.state = 'not-available'
                 self.check_in = fields.Datetime.now()
@@ -82,24 +112,37 @@ class Accommodation(models.Model):
                 rec.state = 'draft'
                 print('Please provide all guests details')
                 warning = {
-                    'title': _('Guest count mismatch'),
-                    'message': _('Please provide all guests details'),
+                    'name': 'Guest count mismatch !',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'guest.count.warning',
+                    'view_mode': 'form',
+                    'view_type': 'form',
+                    'target': 'new'
                 }
-                return {'warning': warning}
+                return warning
 
     def action_checkout(self):
+        """
+        Makes the room available and change state to checkout
+        """
         for rec in self:
             self.room_no.state = 'available'
             rec.state = 'checkout'
             self.check_out = fields.Datetime.now()
 
     def action_cancel(self):
+        """
+        Makes the room available and change state to cancel
+        """
         for rec in self:
             rec.state = 'cancel'
             self.room_no.state = 'available'
 
 
 class AdditionalGuests(models.Model):
+    """
+    Class for the tree view under accommodation form
+    """
     _name = 'room.guests'
     _description = 'Additional Guests'
     _rec_name = 'add_guest_name'
@@ -113,8 +156,28 @@ class AdditionalGuests(models.Model):
     add_guest_age = fields.Integer(string="Age")
 
 
-# class Attachment(models.Model):
-#     _inherit = 'ir.attachment'
-#
-#     attach_id = fields.Many2one('room.accommodation',
-#                                 string="Attachment", invisible=1)
+class GuestWarning(models.TransientModel):
+    """
+    Class for Guest count mismatch warning view
+    """
+    _name = 'guest.count.warning'
+    _description = 'Guest count Warning'
+
+    guest_count_warning = fields.Text(
+        string="Please provide all guests details",
+        readonly=True, store=True)
+    address_proof_warning = fields.Text(
+        string="Please provide address proof",
+        readonly=True, store=True)
+
+
+class AddressWarning(models.TransientModel):
+    """
+    Class for No address proof warning
+    """
+    _name = 'address.warning'
+    _description = 'No address proof Warning'
+
+    address_proof_warning = fields.Text(
+        string="Please provide address proof",
+        readonly=True, store=True)

@@ -1,9 +1,15 @@
+"""
+Facilities
+"""
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields
 
 
 class RoomFacilities(models.Model):
+    """
+    Class for the facilities view
+    """
     _name = 'room.facilities'
     _description = 'Room facilities'
     _rec_name = 'facility_name'
