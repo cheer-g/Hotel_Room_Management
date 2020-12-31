@@ -5,3 +5,4 @@ hotel_manager_facilities,hotel facilities,model_room_facilities,base.group_user,
 hotel_manager_guests,hotel guests,model_room_guests,base.group_user,1,1,1,1
 hotel_guest_warning, Guest warning,model_guest_count_warning,base.group_user,1,1,1,1
 hotel_address_warning, Address warning,model_address_warning,base.group_user,1,1,1,1
+hotel_order_food,Order Food,model_order_food,base.group_user,1,1,1,1

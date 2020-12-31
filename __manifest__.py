@@ -13,7 +13,7 @@
     'website': "http://cheer-g.github.io",
 
     'category': 'Tools',
-    'version': '2.0',
+    'version': '14.0.2.1.2',
     'depends': ['base', 'contacts'],
     'data': [
         'security/security.xml',
@@ -21,6 +21,7 @@
         'views/accommodation.xml',
         'views/views.xml',
         'views/facility.xml',
+        'views/order_food_view.xml',
         'views/templates.xml',
         'data/sequence.xml'
     ],

@@ -31,6 +31,6 @@ class RoomManagement(models.Model):
                                         ('not-available', 'Not Available')],
                              string="Status", readonly="True",
                              default='available')
-
+    accommodation_seq = fields.Char(readonly="True")
     _sql_constraints = [
         ('Room_no', 'unique (room_no)', 'This Room No. Already exist!')]

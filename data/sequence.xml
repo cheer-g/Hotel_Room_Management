@@ -7,5 +7,12 @@
             <field name="prefix">HM/ROOM/</field>
             <field name="padding">3</field>
         </record>
+        <!--        Sequence for Food Order-->
+        <record id="seq_order" model="ir.sequence">
+            <field name="name">Accommodation Sequence</field>
+            <field name="code">order.seq</field>
+            <field name="prefix">HM/FOOD/</field>
+            <field name="padding">3</field>
+        </record>
     </data>
 </odoo>

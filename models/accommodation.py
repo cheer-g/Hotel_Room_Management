@@ -4,6 +4,9 @@ Model for the accommodation view
 # -*- coding: utf-8 -*-
 
 import datetime
+
+from dateutil.relativedelta import relativedelta
+
 from odoo import models, fields, api
 
 
@@ -19,7 +22,7 @@ class Accommodation(models.Model):
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
                          index="True", default=lambda self: 'New')
-    guest = fields.Many2one(
+    guest_id = fields.Many2one(
         'res.partner', string='Guests',
         required=True, change_default=True, index=True, tracking=1)
     guest_count = fields.Integer(required="True", default="1")
@@ -36,11 +39,11 @@ class Accommodation(models.Model):
                                       ('double', 'Double'),
                                       ('dormitory', 'Dormitory')],
                            default='single', required="True")
-    facilities = fields.Many2many('room.facilities', string="Facilities")
-    room_no = fields.Many2one('room.management',
-                              string="Room", required="True",
-                              change_default="True",
-                              domain="[('state','=','available')]")
+    facilities_ids = fields.Many2many('room.facilities', string="Facilities")
+    room_no_id = fields.Many2one('room.management',
+                                 string="Room", required="True",
+                                 change_default="True",
+                                 domain="[('state','=','available')]")
     add_guest_ids = fields.One2many('room.guests', 'guest_ids')
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -48,20 +51,21 @@ class Accommodation(models.Model):
         ('checkout', 'Check-Out'),
         ('cancel', 'Cancelled')
     ], string="Status", readonly="True",
-       default="draft", tracking=1, tracking_visibility='always')
+        default="draft", tracking=1, tracking_visibility='always')
+    current_date = fields.Datetime(default=fields.Date.today())
 
-    @api.onchange('facilities')
+    @api.onchange('facilities_ids')
     def onchange_facilities(self):
         """
         For displaying room number based on Bed type and Facilities
 
         """
         for rec in self:
-            print("Out : ", rec.facilities.ids)
-            return {'domain': {'room_no': [('bed', '=', self.bed),
-                                           ('facility.id', 'in',
-                                            rec.facilities.ids),
-                                           ('state', '=', 'available')]}}
+            print("Out : ", rec.facilities_ids.ids)
+            return {'domain': {'room_no_id': [('bed', '=', self.bed),
+                                              ('facility.id', 'in',
+                                               rec.facilities_ids.ids),
+                                              ('state', '=', 'available')]}}
 
     @api.model
     def create(self, vals):
@@ -80,8 +84,9 @@ class Accommodation(models.Model):
          Computing expected date based on expected days
         """
         today = fields.Date.today()
-        self.expected_date = today + datetime.timedelta(
-            days=self.expected_days)
+        self.expected_date = today + datetime.timedelta(days=self.expected_days)
+        # print(self.expected_date)
+        print(today + datetime.timedelta(days=self.expected_days))
 
     def action_checkin(self):
         """
@@ -102,7 +107,8 @@ class Accommodation(models.Model):
                 }
                 return warning
             if guest_count_list == rec.guest_count:
-                self.room_no.state = 'not-available'
+                self.room_no_id.state = 'not-available'
+                self.room_no_id.accommodation_seq = rec.seq_no
                 self.check_in = fields.Datetime.now()
                 rec.state = 'checkin'
             else:
@@ -123,7 +129,8 @@ class Accommodation(models.Model):
         Makes the room available and change state to checkout
         """
         for rec in self:
-            self.room_no.state = 'available'
+            self.room_no_id.state = 'available'
+            self.room_no_id.accommodation_seq = 'Not Assigned'
             rec.state = 'checkout'
             self.check_out = fields.Datetime.now()
 
@@ -133,7 +140,8 @@ class Accommodation(models.Model):
         """
         for rec in self:
             rec.state = 'cancel'
-            self.room_no.state = 'available'
+            self.room_no_id.accommodation_seq = 'Not Assigned'
+            self.room_no_id.state = 'available'
 
 
 class AdditionalGuests(models.Model):

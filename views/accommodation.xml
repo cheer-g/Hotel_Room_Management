@@ -29,7 +29,7 @@
                                         <field name="seq_no" readonly="1"/>
                                     </h1>
                                 </div>
-                                <field name="guest" widget="res_partner_many2one"
+                                <field name="guest_id" widget="res_partner_many2one"
                                        context="{'res_partner_search_mode': 'customer',
                                        'show_address': 1, 'show_vat': True}"
                                        options='{"always_reload": True}'/>
@@ -39,9 +39,9 @@
                             </group>
                             <group col="1">
                                 <field name="bed"/>
-                                <field name="facilities" widget="many2many_tags"
+                                <field name="facilities_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True, 'no_create': True}"/>
-                                <field name="room_no"  widget="selection"/>
+                                <field name="room_no_id"  widget="selection"/>
                                 <field name="expected_days"
                                        states="draft, checkin"/>
                                 <field name="expected_date"
@@ -80,10 +80,11 @@
             <field name="arch" type="xml">
                 <tree  default_order="check_in desc">
                     <field name="seq_no" readonly="1"/>
-                    <field name="guest"/>
-                    <field name="room_no"/>
+                    <field name="guest_id"/>
+                    <field name="room_no_id"/>
                     <field name="state"/>
                     <field name="bed" optional="hide"/>
+<!--                    <field name="expected_date" optional="show"/>-->
                 </tree>
             </field>
         </record>
@@ -130,17 +131,23 @@
             <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
                 <search string="Active Accommodations">
-                    <field name="room_no"/>
-                    <field name="guest"/>
+                    <field name="room_no_id"/>
+                    <field name="guest_id"/>
                     <field name="seq_no"/>
-                    <filter string="Active"
+                    <filter string="Not Cancelled"
                             name="not_cancelled"
                             domain="[('state', 'in', ['draft', 'checkin', 'checkout'])]"/>
-                    <filter string="Room" name="room_group"  context="{'group_by': 'room_no'}"/>
-                    <filter string="Type" name="type_group"  context="{'group_by': 'bed'}"/>
-                    <filter string="State" name="state_group"  context="{'group_by': 'state'}"/>
-                    <filter string="Check-In" name="state_checkin" domain="[('state', 'not in', ['checkout', 'draft', 'cancel'])]"/>
-<!--                    <filter string="Today" domain="[('check_out','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('check_out','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>-->
+                    <filter string="Room" name="room_group"
+                            context="{'group_by': 'room_no_id'}"/>
+                    <filter string="Type" name="type_group"
+                            context="{'group_by': 'bed'}"/>
+                    <filter string="State" name="state_group"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Check-In" name="state_checkin"
+                            domain="[('state', 'not in', ['checkout', 'draft', 'cancel'])]"/>
+                    <filter string="Current-day checkout" name="checkout_today"
+                            domain="[('check_out', '&gt;=',
+                            (context_today() + relativedelta(days=1)))]"/>
                 </search>
             </field>
         </record>
@@ -154,6 +161,14 @@
               {"search_default_not_cancelled":1,
               }
           </field>
+          <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new accommodation
+                </p>
+                <p>
+                    Here you can place new accommodation entries
+                </p>
+            </field>
         </record>
 
 <!--     Main   menu-->
