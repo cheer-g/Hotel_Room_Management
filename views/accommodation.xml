@@ -78,13 +78,15 @@
             <field name="name">View Accommodations</field>
             <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
-                <tree  default_order="check_in desc">
+                <tree  default_order="check_in desc"
+                       decoration-danger="(expected_date &lt; current_date) and (state != 'checkout')"
+                        decoration-primary="expected_date==current_date">
                     <field name="seq_no" readonly="1"/>
                     <field name="guest_id"/>
                     <field name="room_no_id"/>
                     <field name="state"/>
                     <field name="bed" optional="hide"/>
-<!--                    <field name="expected_date" optional="show"/>-->
+                    <field name="expected_date" optional="show"/>
                 </tree>
             </field>
         </record>
@@ -146,8 +148,9 @@
                     <filter string="Check-In" name="state_checkin"
                             domain="[('state', 'not in', ['checkout', 'draft', 'cancel'])]"/>
                     <filter string="Current-day checkout" name="checkout_today"
-                            domain="[('check_out', '&gt;=',
-                            (context_today() + relativedelta(days=1)))]"/>
+                            domain="['|',('state', '=', 'checkout'), ('check_out', '=', current_date)]"/>
+                    <filter string="Expected check-out next day" name="checkout_next"
+                            domain="[('expected_date', '&gt;', current_date)]"/>
                 </search>
             </field>
         </record>

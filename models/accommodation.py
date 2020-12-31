@@ -19,6 +19,16 @@ class Accommodation(models.Model):
     _inherit = 'mail.thread'
     _rec_name = 'seq_no'
 
+    def _compute_expected_date(self):
+        """
+         Computing expected date based on expected days
+        """
+        print(self.expected_days)
+        today = fields.Date.today()
+        self.expected_date = today + datetime.timedelta(days=self.expected_days)
+        # print(self.expected_date)
+        print(today + datetime.timedelta(days=self.expected_days))
+
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
                          index="True", default=lambda self: 'New')
@@ -33,8 +43,8 @@ class Accommodation(models.Model):
     check_out = fields.Datetime(readonly="True")
     expected_days = fields.Integer(string="Expected Days")
     expected_date = fields.Date(string="Expected Date",
-                                readonly=True,
-                                compute="_compute_expected_date")
+                                readonly=False,
+                                default=_compute_expected_date)
     bed = fields.Selection(selection=[('single', 'Single'),
                                       ('double', 'Double'),
                                       ('dormitory', 'Dormitory')],
@@ -83,6 +93,7 @@ class Accommodation(models.Model):
         """
          Computing expected date based on expected days
         """
+        print(self.expected_days)
         today = fields.Date.today()
         self.expected_date = today + datetime.timedelta(days=self.expected_days)
         # print(self.expected_date)
