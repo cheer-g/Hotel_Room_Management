@@ -1,0 +1,67 @@
+<odoo>
+    <data>
+<!--    Create and edit food items-->
+        <record id="food_create_view" model="ir.ui.view">
+            <field name="name">Food</field>
+            <field name="model">room.food</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="food_name"/>
+                            <field name="category_id"/>
+                            <field name="image"/>
+                            <field name="price"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    <!--    Tree view for foods-->
+        <record id="food_create_tree_view" model="ir.ui.view">
+            <field name="name">Food</field>
+            <field name="model">room.food</field>
+            <field name="arch" type="xml">
+                <tree sample="1">
+                    <field name="food_name"/>
+                    <field name="category_id"/>
+                    <field name="price"/>
+                </tree>
+            </field>
+        </record>
+
+    <!--    Configure food categories-->
+        <record id="food_create_category" model="ir.ui.view">
+            <field name="name">Food Category</field>
+            <field name="model">food.category</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="category_name"/>
+                </tree>
+            </field>
+        </record>
+
+    <!--    Food view action-->
+        <record id="view_food" model="ir.actions.act_window">
+            <field name="name">Food</field>
+            <field name="res_model">room.food</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    <!--    Category view action-->
+        <record id="food_category_view" model="ir.actions.act_window">
+            <field name="name">Food Category</field>
+            <field name="res_model">food.category</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+    <!--   Create food Menu-->
+        <menuitem name="Foods" id="create_food" parent="room_management.config"
+            action="view_food"/>
+
+    <!--    View Food Category-->
+        <menuitem name="Food Category" id="food_category_menu"
+                  parent="room_management.config" action="food_category_view"/>
+    </data>
+</odoo>

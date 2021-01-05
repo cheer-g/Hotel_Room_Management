@@ -1,29 +1,15 @@
 <odoo>
-    <data>
+    <data noupdate="1">
 
-          <record id="object0" model="room_management.room_management">
-            <field name="name">Object 0</field>
-            <field name="value">0</field>
+          <record id="room_management_data" model="room.management">
+            <field name="room_no">Room 99</field>
           </record>
 
-          <record id="object1" model="room_management.room_management">
-            <field name="name">Object 1</field>
-            <field name="value">10</field>
-          </record>
-
-          <record id="object2" model="room_management.room_management">
-            <field name="name">Object 2</field>
-            <field name="value">20</field>
-          </record>
-
-          <record id="object3" model="room_management.room_management">
-            <field name="name">Object 3</field>
-            <field name="value">30</field>
-          </record>
-
-          <record id="object4" model="room_management.room_management">
-            <field name="name">Object 4</field>
-            <field name="value">40</field>
+          <record id="room_accommodation_data" model="room.accommodation">
+            <field name="seq_no">HM/ROOM/007</field>
+            <field name="guest_id">9</field>
+            <field name="room_no_id">007</field>
+            <field name="state">checkin</field>
           </record>
 
     </data>

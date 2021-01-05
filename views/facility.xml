@@ -6,7 +6,7 @@
            <field name="name">View Facilities</field>
            <field name="model">room.facilities</field>
            <field name="arch" type="xml">
-               <tree editable="top">
+               <tree editable="top" sample="1">
                    <field name="facility_name"/>
                    <field name="room_no" widget="many2many_tags"/>
                </tree>

@@ -20,7 +20,7 @@
                   <field name="currency_id" invisible="1"/>
                   <field name="facility" widget="many2many_tags"/>
                   <field name="rent" widget="monetary"/>
-                  <field name="accommodation_seq"/>
+                  <field name="accommodation_seq" invisible="1"/>
                 </group>
               </group>
           </sheet>
@@ -34,7 +34,7 @@
       <field name="name">View rooms</field>
       <field name="model">room.management</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree sample="1">
           <field name="currency_id" invisible="1"/>
           <field name="room_no"/>
           <field name="bed"/>
@@ -76,7 +76,9 @@
 
     <!-- top menu -->
 
-    <menuitem name="Configuration" id="room_management.config" parent="room_management.menu_root"/>
+    <menuitem name="Configuration" id="room_management.config"
+              parent="room_management.menu_root"
+              sequence="19"/>
 
     <!-- submenu -->
 

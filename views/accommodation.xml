@@ -16,8 +16,7 @@
                                 string="Check-Out" class="oe_highlight"
                                 states="checkin"/>
                         <button name="action_cancel" type="object"
-                                string="Cancel" class="oe_highlight"
-                                states="draft, checkin"/>
+                                string="Cancel" states="draft, checkin"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,checkin,checkout"/>
                     </header>
@@ -45,9 +44,11 @@
                                 <field name="expected_days"
                                        states="draft, checkin"/>
                                 <field name="expected_date"
-                                       states="draft, checkin"/>
+                                       states="draft, checkin"  readonly="1"
+                                       force_save="1"/>
                                 <field name="check_in"/>
                                 <field name="check_out"/>
+<!--                                <field name="food_order_ids"/>-->
                             </group>
                         </group>
                         <notebook>
@@ -78,11 +79,15 @@
             <field name="name">View Accommodations</field>
             <field name="model">room.accommodation</field>
             <field name="arch" type="xml">
-                <tree  default_order="check_in desc"
-                       decoration-danger="(expected_date &lt; current_date) and (state != 'checkout')"
-                       decoration-primary="expected_date==current_date"
-                       decoration-bf="(expected_date &lt; current_date) and (state != 'checkout')"
-                       decoration-it="expected_date==current_date">
+                <tree sample="1" default_order="check_in desc"
+                       decoration-danger="(expected_date &lt; current_date)
+                       and (state != 'checkout')"
+                       decoration-primary="(expected_date==current_date)
+                       and (state != 'checkout') and (state != 'cancel')"
+                       decoration-bf="(expected_date &lt; current_date)
+                       and (state != 'checkout')"
+                       decoration-it="(expected_date==current_date)
+                       and (state != 'checkout')  and (state != 'cancel')">
                     <field name="seq_no" readonly="1"/>
                     <field name="guest_id"/>
                     <field name="room_no_id"/>
@@ -93,41 +98,6 @@
             </field>
         </record>
 
-<!--        Warning wizard for Guest count mismatch-->
-
-        <record id="guest_warning_wizard" model="ir.ui.view">
-            <field name="name">Guest count mismatch!</field>
-            <field name="model">guest.count.warning</field>
-            <field name="arch" type="xml">
-                <form>
-                    <group>
-                        <field name="guest_count_warning"/>
-                        <footer>
-                            <button string="OK" special="cancel"
-                                    class="oe_highlight"/>
-                        </footer>
-                    </group>
-                </form>
-            </field>
-        </record>
-
-<!--        Warning Wizard for No Address proof-->
-
-        <record id="address_warning_wizard" model="ir.ui.view">
-            <field name="name">Please add address proof!</field>
-            <field name="model">address.warning</field>
-            <field name="arch" type="xml">
-                <form>
-                    <group>
-                        <field name="address_proof_warning"/>
-                        <footer>
-                            <button string="OK" special="cancel"
-                                    class="oe_highlight"/>
-                        </footer>
-                    </group>
-                </form>
-            </field>
-        </record>
 
 <!--        Search view for Accommodation [No cancelled entries]-->
         <record id="state_search_view" model="ir.ui.view">
@@ -139,8 +109,8 @@
                     <field name="guest_id"/>
                     <field name="seq_no"/>
                     <filter string="Expected checkouts"
-                            name="not_cancelled"
-                            domain="[('state', 'in', ['draft', 'checkin', 'checkout']),
+                            name="expected_checkout"
+                            domain="[('state', '=', 'checkin'),
                             ('expected_date', '=', current_date)]"/>
                     <filter string="Room" name="room_group"
                             context="{'group_by': 'room_no_id'}"/>
@@ -149,11 +119,19 @@
                     <filter string="State" name="state_group"
                             context="{'group_by': 'state'}"/>
                     <filter string="Check-In" name="state_checkin"
-                            domain="[('state', 'not in', ['checkout', 'draft', 'cancel'])]"/>
-                    <filter string="Current-day checkout" name="checkout_today"
-                            domain="['|',('state', '=', 'checkout'), ('check_out', '=', current_date)]"/>
+                            domain="[('state', 'not in',
+                            ['checkout', 'draft', 'cancel'])]"/>
+                    <filter string="Today's checkout" name="checkout_today"
+                            domain="[('check_out', '&lt;=',
+                            ((context_today()+datetime.timedelta(days=1)).strftime(
+                            '%Y-%m-%d 00:00:00'))), ('check_out', '&gt;=',
+                            ((context_today()-datetime.timedelta(days=0)).strftime(
+                            '%Y-%m-%d 00:00:00')))]"/>
                     <filter string="Expected check-out next day" name="checkout_next"
-                            domain="[('expected_date', '&gt;', current_date)]"/>
+                            domain="[('state', '=', 'checkin'),
+                            ('expected_date', '=', (
+                            (context_today()+datetime.timedelta(days=1)).strftime(
+                            '%Y-%m-%d 00:00:00')))]"/>
                 </search>
             </field>
         </record>
@@ -164,9 +142,10 @@
           <field name="res_model">room.accommodation</field>
           <field name="view_mode">tree,form</field>
           <field name="context">
-              {"search_default_not_cancelled":1,
+              {"search_default_expected_checkout":1,
               }
           </field>
+          <field name="domain">[('state', '!=', 'cancel')]</field>
           <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Create a new accommodation
@@ -181,11 +160,12 @@
         <menuitem name="Hotel Room Management" id="room_management.menu_root"/>
 
 <!--        Top menu-->
-        <menuitem name="Reception" id="room_management.reception" parent="room_management.menu_root"
-                  sequence="1"/>
+        <menuitem name="Reception" id="room_management.reception"
+                  parent="room_management.menu_root" sequence="1"/>
 
 <!--        Submenu-->
-        <menuitem name="Accommodation" id="room_management.acc" parent="room_management.reception"
+        <menuitem name="Accommodation" id="room_management.acc"
+                  parent="room_management.reception"
                   action="room_management.acc_window"/>
     </data>
 </odoo>

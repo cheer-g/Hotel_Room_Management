@@ -11,10 +11,11 @@
 
     'author': "Sreerag E",
     'website': "http://cheer-g.github.io",
+    'images': ['static/description/hotel.png'],
 
     'category': 'Tools',
     'version': '14.0.2.1.2',
-    'depends': ['base', 'contacts'],
+    'depends': ['base', 'contacts', 'lunch'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -22,6 +23,7 @@
         'views/views.xml',
         'views/facility.xml',
         'views/order_food_view.xml',
+        'views/food_manage.xml',
         'views/templates.xml',
         'data/sequence.xml'
     ],
