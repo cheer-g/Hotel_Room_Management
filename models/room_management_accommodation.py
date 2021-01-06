@@ -14,6 +14,17 @@ class Accommodation(models.Model):
     _inherit = 'mail.thread'
     _rec_name = 'seq_no'
 
+    def _compute_orders_id(self):
+        for rec in self:
+            result_id = self.env['food.menu'].search([
+                ('accommodation_id', '=', rec.seq_no)
+            ])
+            print(result_id)
+            self.update({'orders_id': result_id})
+            # print("Current out: ", rec.seq_no)
+            # return {'domain': {'orders_id':
+            #                        [('accommodation_id', '=', rec.seq_no)]}}
+
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
                          index="True", default=lambda self: 'New')
@@ -47,8 +58,12 @@ class Accommodation(models.Model):
     ], string="Status", readonly="True",
         default="draft", tracking=1, tracking_visibility='always')
     current_date = fields.Datetime(default=fields.Date.today())
-    food_order_ids = fields.One2many('order.food', 'order_sequence',
-                                     readonly="False")
+    # food_order_ids = fields.One2many('food.menu', 'accommodation_id',
+    #                                  readonly="False",
+    #                                  domain=[('accommodation_id', '=',
+    #                                           seq_no)])
+    orders_id = fields.One2many('food.menu', 'accommodation_id',
+                                compute=_compute_orders_id)
 
     @api.onchange('expected_days')
     def _compute_expected_date(self):
@@ -76,10 +91,6 @@ class Accommodation(models.Model):
 
         """
         if self.facilities_ids:
-            print({'domain': {'room_no_id': [('bed', '=', self.bed),
-                                              ('facility.id', 'in',
-                                               self.facilities_ids.ids),
-                                              ('state', '=', 'available')]}})
             return {'domain': {'room_no_id': [('bed', '=', self.bed),
                                               ('facility.id', 'in',
                                                self.facilities_ids.ids),

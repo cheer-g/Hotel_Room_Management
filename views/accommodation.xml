@@ -48,7 +48,7 @@
                                        force_save="1"/>
                                 <field name="check_in"/>
                                 <field name="check_out"/>
-<!--                                <field name="food_order_ids"/>-->
+<!--                                <field name="orders_id" widget="many2many_tags"/>-->
                             </group>
                         </group>
                         <notebook>
@@ -59,6 +59,17 @@
                                         <field name="add_guest_name"/>
                                         <field name="add_guest_gender"/>
                                         <field name="add_guest_age"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Payment" name="payment">
+                                <field name="orders_id">
+                                    <tree create="true" delete="true"
+                                          editable="bottom">
+                                        <field name="food_id"/>
+                                        <field name="quantity"/>
+                                        <field name="price"/>
+                                        <field name="subtotal_price" sum="Total"/>
                                     </tree>
                                 </field>
                             </page>
