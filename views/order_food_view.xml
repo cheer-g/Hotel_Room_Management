@@ -18,16 +18,17 @@
                             <field name="accommodation_entry" widget="selection" invisible="1"/>
                             <field name="guest_id" widget="selection"
                                    options="{'no_create_edit': True, 'no_create': True}"/>
-                            <field name="order_time"/>
+                            <field name="order_time" readonly="1" force_save="1"/>
                         </group>
                         <notebook>
                             <page string="Menu">
-                                <field name="category_ids" widget="many2many_checkboxes"/>
+                                <group>
+                                <field name="category_ids" widget="many2many_checkboxes" icon="fa-cutlery"/>
 <!--                                <button string="Add To List"  name="add_to_list" type="object" class="oe_highlight"/>-->
                                 <field name="product_ids"   widget="many2many_kanban"
-                                           options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}"
-                                           context="{'form_view_ref': 'room_management.order_view_form',
-                                            'default_company_id':'company_id'}">
+                                           options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}">
+<!--                                           context="{'form_view_ref': 'room_management.order_view_form',-->
+<!--                                            'default_company_id':'company_id'}">-->
                                     <kanban quick_create="true" create="true" delete="true">
                                         <field name="id"/>
                                         <field name="food_name"/>
@@ -48,6 +49,7 @@
                                                                     <div class="o_kanban_tags_section">
                                                                         <ul>
                                                                             <li>Price : <field name="price" widget="Monetary"/></li>
+                                                                            <li>Category : <field name="category_id"/></li>
                                                                         </ul>
                                                                     </div>
                                                                 </strong>
@@ -59,6 +61,7 @@
                                         </templates>
                                     </kanban>
                                 </field>
+                                </group>
                             </page>
                             <page string="Order List">
                                 <tree>
@@ -113,7 +116,7 @@
             <field name="name">Orders</field>
             <field name="model">order.food</field>
             <field name="arch" type="xml">
-                <tree sample="1">
+                <tree sample="1" default_order="order_sequence desc">
                     <field name="order_sequence"/>
                     <field name="room_no_id"/>
                     <field name="guest_id"/>
@@ -134,6 +137,13 @@
                 Here you can place food orders for checked-in customers
                 </p>
             </field>
+        </record>
+
+        <record id="order_form_food" model="ir.actions.act_window">
+            <field name="name">Add product</field>
+            <field name="res_model">food.menu</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="order_view_form"/>
         </record>
 
 <!--        <record id="test_window" model="ir.actions.act_window">-->

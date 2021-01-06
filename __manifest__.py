@@ -11,7 +11,7 @@
 
     'author': "Sreerag E",
     'website': "http://cheer-g.github.io",
-    'images': ['static/description/hotel.png'],
+    'images': ['static/description/banner.png'],
 
     'category': 'Tools',
     'version': '14.0.2.1.2',

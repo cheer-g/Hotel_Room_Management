@@ -5,9 +5,6 @@ from odoo import models, fields
 
 
 class RoomManagement(models.Model):
-    """
-    Class for the room management view
-    """
     _name = 'room.management'
     _description = 'room_management'
     _rec_name = 'room_no'

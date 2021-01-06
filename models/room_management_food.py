@@ -4,9 +4,6 @@ from odoo import models, fields
 
 
 class FoodItems(models.Model):
-    """
-    Add food details
-    """
     _name = 'room.food'
     _description = 'Food products'
     _rec_name = 'food_name'
@@ -18,11 +15,8 @@ class FoodItems(models.Model):
 
 
 class FoodCategory(models.Model):
-    """
-    Add food category
-    """
     _name = 'food.category'
     _description = 'Food category'
     _rec_name = 'category_name'
 
-    category_name = fields.Char()
+    category_name = fields.Char(string="Category", required="True")

@@ -145,9 +145,6 @@ class Accommodation(models.Model):
 
 
 class AdditionalGuests(models.Model):
-    """
-    Class for the tree view under accommodation form
-    """
     _name = 'room.guests'
     _description = 'Additional Guests'
     _rec_name = 'add_guest_name'

@@ -4,9 +4,6 @@ from odoo import models, fields, api
 
 
 class OrderFood(models.Model):
-    """
-    Class for Order food menu
-    """
     _name = 'order.food'
     _description = 'Order Food'
     _rec_name = 'order_sequence'
@@ -17,15 +14,14 @@ class OrderFood(models.Model):
                                  index="True", default=lambda self: 'New')
     room_no_id = fields.Many2one('room.management',
                                  domain=[('state', '=', 'not-available')],
-                                 required=True)
+                                 required=True, string="Room No.")
     accommodation_entry = fields.Many2one('room.accommodation')
-    guest_id = fields.Many2one('res.partner')
-    order_time = fields.Datetime(default=fields.Datetime.now(), readonly="True")
+    guest_id = fields.Many2one('res.partner', string="Guest")
+    order_time = fields.Datetime(string="Order Time")
 
     # Food details
-    category_ids = fields.Many2many('food.category',
-                                  string='Category',
-                                  required=True)
+    category_ids = fields.Many2many('food.category', string='Category',
+                                    required=True)
     product_ids = fields.Many2many('room.food', string='Product',
                                    readonly="False")
     name = fields.Char('Product Name', related='product_ids.food_name')
@@ -43,6 +39,7 @@ class OrderFood(models.Model):
         result_id = self.env['room.accommodation'].search([
             ('seq_no', '=', self.room_no_id.accommodation_seq)])
         self.update({'accommodation_entry': result_id})
+        self.order_time = fields.Datetime.now()
 
     @api.onchange('accommodation_entry')
     def _onchange_accommodation_entry(self):

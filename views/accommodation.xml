@@ -82,18 +82,16 @@
                 <tree sample="1" default_order="check_in desc"
                        decoration-danger="(expected_date &lt; current_date)
                        and (state != 'checkout')"
-                       decoration-primary="(expected_date==current_date)
+                       decoration-warning="(expected_date==current_date)
                        and (state != 'checkout') and (state != 'cancel')"
                        decoration-bf="(expected_date &lt; current_date)
-                       and (state != 'checkout')"
-                       decoration-it="(expected_date==current_date)
-                       and (state != 'checkout')  and (state != 'cancel')">
+                       and (state != 'checkout')">
                     <field name="seq_no" readonly="1"/>
                     <field name="guest_id"/>
                     <field name="room_no_id"/>
                     <field name="state"/>
                     <field name="bed" optional="hide"/>
-                    <field name="expected_date" optional="show"/>
+                    <field name="expected_date" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -127,7 +125,7 @@
                             '%Y-%m-%d 00:00:00'))), ('check_out', '&gt;=',
                             ((context_today()-datetime.timedelta(days=0)).strftime(
                             '%Y-%m-%d 00:00:00')))]"/>
-                    <filter string="Expected check-out next day" name="checkout_next"
+                    <filter string="Check-out next day" name="checkout_next"
                             domain="[('state', '=', 'checkin'),
                             ('expected_date', '=', (
                             (context_today()+datetime.timedelta(days=1)).strftime(
