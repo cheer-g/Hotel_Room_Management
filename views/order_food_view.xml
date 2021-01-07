@@ -17,51 +17,52 @@
                                    options="{'no_create_edit': True, 'no_create': True}"/>
                             <field name="accommodation_id" widget="selection" invisible="1"/>
                             <field name="guest_id" widget="selection"
-                                   options="{'no_create_edit': True, 'no_create': True}"/>
+                                   options="{'no_create_edit': True, 'no_create': True}"
+                                   readonly="1" force_save="1" />
                             <field name="order_time" readonly="1" force_save="1"/>
                         </group>
                         <notebook>
                             <page string="Menu">
                                 <group>
-                                <field name="category_ids" widget="many2many_checkboxes" icon="fa-cutlery"/>
-                                <field name="product_ids"   widget="many2many_kanban"
-                                           options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}"
-                                           context="{'form_view_ref': 'room_management.order_view_form',
-                                            'default_company_id':'company_id'}">
-                                    <kanban quick_create="true" create="true" delete="true">
-                                        <field name="id"/>
-                                        <field name="food_name"/>
-                                        <templates>
-                                            <t t-name="kanban-box">
-                                                <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_kanban_record">
-                                                    <field name="image"
-                                                           class="o_lunch_image o_kanban_image_fill_left d-none d-md-block"
-                                                           options="{'placeholder': '/lunch/static/img/lunch.png', 'size': [94, 94]}"
-                                                           widget="image"/>
-                                                    <div class="oe_kanban_details ml8">
-                                                        <div class="o_kanban_record_top">
-                                                            <div class="o_kanban_record_headings">
-                                                                <strong class="o_kanban_record_title">
-                                                                    <div>
-                                                                        <strong><span t-esc="record.food_name.value"/></strong>
-                                                                    </div>
-                                                                    <div class="o_kanban_tags_section">
-                                                                        <ul>
-                                                                            <li>Price : <field name="price" widget="Monetary"/></li>
-                                                                            <li>Category : <field name="category_id"/></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </strong>
+<!--                                    <button string="Add To List"  name="add_to_list" type="object" class="oe_highlight"/>-->
+                                    <field name="category_ids" widget="many2many_checkboxes" icon="fa-cutlery"/>
+                                    <field name="product_ids"   widget="many2many_kanban"
+                                               options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}"
+                                               context="{'form_view_ref': 'room_management.order_view_form',
+                                                'default_company_id':'company_id'}">
+                                        <kanban quick_create="true" create="true" delete="true">
+                                            <field name="id"/>
+                                            <field name="food_name"/>
+                                            <templates>
+                                                <t t-name="kanban-box">
+                                                    <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_kanban_record">
+                                                        <field name="image"
+                                                               class="o_lunch_image o_kanban_image_fill_left d-none d-md-block"
+                                                               options="{'placeholder': '/lunch/static/img/lunch.png', 'size': [94, 94]}"
+                                                               widget="image"/>
+                                                        <div class="oe_kanban_details ml8">
+                                                            <div class="o_kanban_record_top">
+                                                                <div class="o_kanban_record_headings">
+                                                                    <strong class="o_kanban_record_title">
+                                                                        <div>
+                                                                            <strong><span t-esc="record.food_name.value"/></strong>
+                                                                        </div>
+                                                                        <div class="o_kanban_tags_section">
+                                                                            <ul>
+                                                                                <li>Price : <field name="price" widget="Monetary"/></li>
+                                                                                <li>Category : <field name="category_id"/></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </strong>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </t>
-                                        </templates>
-                                    </kanban>
-                                </field>
+                                                </t>
+                                            </templates>
+                                        </kanban>
+                                    </field>
                                 </group>
-                                <button string="Add To List"  name="add_to_list" type="object" class="oe_highlight"/>
                             </page>
                             <page string="Order List">
                                 <tree>
@@ -103,9 +104,9 @@
                         </div>
 <!--                    </field>-->
                     <footer>
-<!--                            <button string="Add To List"-->
-<!--                                    type="object" class="oe_highlight"-->
-<!--                                    special="save"/>-->
+                            <button string="Add To List"
+                                    type="object" class="oe_highlight"
+                                    special="save"/>
 <!--                        <button string="Discard" special="cancel"/>-->
                     </footer>
                 </form>

@@ -7,7 +7,7 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <group>
+                        <group style="width:60%%">
                             <field name="food_name"/>
                             <field name="category_id"/>
                             <field name="image"/>

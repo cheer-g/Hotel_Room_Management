@@ -48,7 +48,7 @@ class OrderFood(models.Model):
         """
         result_id = self.env['res.partner'].search([
             ('id', '=', self.accommodation_id.guest_id.id)], limit=1)
-        print("Test", result_id.id)
+        print("Test", result_id.id, self.accommodation_id.guest_id.id)
         self.update({'guest_id': result_id.id})
 
     @api.model
@@ -73,10 +73,10 @@ class OrderFood(models.Model):
         #                        [('category_id', 'in',
         #                          rec.category_ids.ids)]}}
 
-        pack_id = self.env['room.food'].search(
+        result = self.env['room.food'].search(
             [('category_id', 'in', self.category_ids.ids)])
-        print("test : ", pack_id)
-        self.update({'product_ids': pack_id})
+        print("test : ", result)
+        self.update({'product_ids': result})
 
     def add_to_list(self):
         """

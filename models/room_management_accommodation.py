@@ -79,6 +79,7 @@ class Accommodation(models.Model):
 
     @api.onchange('bed')
     def _onchange_bed(self):
+        self.room_no_id = False
         if not self.facilities_ids:
             return {'domain': {
                 'room_no_id': [('bed', '=', self.bed),
@@ -95,6 +96,15 @@ class Accommodation(models.Model):
                                               ('facility.id', 'in',
                                                self.facilities_ids.ids),
                                               ('state', '=', 'available')]}}
+
+    @api.onchange('room_no_id')
+    def _onchange_room_no_id(self):
+        result = self.env['room.facilities'].search([
+            ('id', 'in', self.room_no_id.facility.ids)
+        ])
+        print("Facility ", result)
+        # self.facilities_ids = False
+        self.update({'facilities_ids': result})
 
     @api.model
     def create(self, vals):

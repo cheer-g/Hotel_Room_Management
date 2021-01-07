@@ -39,7 +39,8 @@
                             <group col="1">
                                 <field name="bed"/>
                                 <field name="facilities_ids" widget="many2many_tags"
-                                       options="{'no_create_edit': True, 'no_create': True}"/>
+                                       options="{'no_create_edit': True, 'no_create': True}"
+                                       force_save="1" />
                                 <field name="room_no_id"  widget="selection"/>
                                 <field name="expected_days"
                                        states="draft, checkin"/>
