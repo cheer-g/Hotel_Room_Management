@@ -176,7 +176,7 @@
 
 <!--        Menu-->
         <menuitem id="order_food_menu" name="Order Food"
-                  parent="room_management.menu_root" action="order_food_action"/>
+                  parent="room_management.reception" action="order_food_action"/>
 <!--        <menuitem id="order_food_orders_menu" name="Orders"-->
 <!--                  parent="room_management.config" action="food_menu_action"/>-->
     </data>

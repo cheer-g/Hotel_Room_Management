@@ -46,10 +46,7 @@ class OrderFood(models.Model):
         """
         Function to retrieve corresponding guest
         """
-        result_id = self.env['res.partner'].search([
-            ('id', '=', self.accommodation_id.guest_id.id)], limit=1)
-        print("Test", result_id.id, self.accommodation_id.guest_id.id)
-        self.update({'guest_id': result_id.id})
+        self.update({'guest_id': self.accommodation_id.guest_id.id})
 
     @api.model
     def create(self, vals):

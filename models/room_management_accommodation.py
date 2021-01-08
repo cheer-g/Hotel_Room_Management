@@ -15,15 +15,27 @@ class Accommodation(models.Model):
     _rec_name = 'seq_no'
 
     def _compute_orders_id(self):
+        """Display corresponding orders"""
         for rec in self:
             result_id = self.env['food.menu'].search([
                 ('accommodation_id', '=', rec.seq_no)
             ])
             print(result_id)
             self.update({'orders_id': result_id})
-            # print("Current out: ", rec.seq_no)
-            # return {'domain': {'orders_id':
-            #                        [('accommodation_id', '=', rec.seq_no)]}}
+
+    def _compute_rent(self):
+        """Compute rent based on no. of days"""
+        for rec in self:
+            if rec.check_in:
+                if rec.check_out:
+                    days = rec.check_out - rec.check_in
+                    print("Days : ", days.days)
+                    rec.rent = (days.days+1) * rec.room_no_id.rent
+                else:
+                    days = fields.datetime.today() - rec.check_in
+                    rec.rent = (days.days + 1) * rec.room_no_id.rent
+            else:
+                rec.rent = rec.room_no_id.rent
 
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
@@ -32,14 +44,11 @@ class Accommodation(models.Model):
         'res.partner', string='Guests',
         required=True, index=True, tracking=1)
     guest_count = fields.Integer(required="True", default="1")
-    attachment_ids = fields.Many2many('ir.attachment',
-                                      'address_attachment_rel', 'address_id',
-                                      'attachment_id', string='Attachments')
     check_in = fields.Datetime(readonly="True")
     check_out = fields.Datetime(readonly="True")
-    expected_days = fields.Integer(string="Expected Days")
+    expected_days = fields.Integer(string="Expected Days", default="1")
     expected_date = fields.Date(string="Expected Date",
-                                readonly=True)
+                                readonly=True, default=fields.Date.today())
     bed = fields.Selection(selection=[('single', 'Single'),
                                       ('double', 'Double'),
                                       ('dormitory', 'Dormitory')],
@@ -50,6 +59,11 @@ class Accommodation(models.Model):
                                  change_default="True",
                                  domain="[('state','=','available')]")
     add_guest_ids = fields.One2many('room.guests', 'guest_ids')
+    currency_id = fields.Many2one(
+        'res.currency', string='Currency',
+        default=lambda self: self.env.user.company_id.currency_id.id,
+        required=True)
+    rent = fields.Monetary(string="Rent", compute=_compute_rent)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('checkin', 'Check-In'),
@@ -66,16 +80,15 @@ class Accommodation(models.Model):
                                 compute=_compute_orders_id)
 
     @api.onchange('expected_days')
-    def _compute_expected_date(self):
+    def _onchange_expected_date(self):
         """
          Computing expected date based on expected days
         """
-        for rec in self:
-            if rec.expected_days:
-                rec.expected_date = fields.Date.today() + datetime.timedelta(
-                    rec.expected_days)
-            else:
-                rec.expected_date = fields.Date.today()
+        if self.expected_days:
+            self.expected_date = fields.Datetime.now() + datetime.timedelta(
+                self.expected_days-1)
+        else:
+            self.expected_date = fields.Date.today()
 
     @api.onchange('bed')
     def _onchange_bed(self):
@@ -103,7 +116,7 @@ class Accommodation(models.Model):
             ('id', 'in', self.room_no_id.facility.ids)
         ])
         print("Facility ", result)
-        # self.facilities_ids = False
+        self.rent = self.room_no_id.rent
         self.update({'facilities_ids': result})
 
     @api.model
@@ -131,7 +144,7 @@ class Accommodation(models.Model):
         """
         for rec in self:
             guest_count_list = 1 + len(self.add_guest_ids.ids)
-            if not self.attachment_ids:
+            if not self.message_main_attachment_id.id:
                 rec.state = 'draft'
                 raise UserError(
                     _('Please provide address proof'))

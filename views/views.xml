@@ -10,6 +10,7 @@
               <field name="state" widget="statusbar"/>
           </header>
           <sheet>
+              <div class="oe_button_box" name="button_box"/>
               <group colspan="4">
                 <group col="2">
                   <field name="room_no" required="True"/>
@@ -55,6 +56,27 @@
                         domain="[('state', '=', 'available')]"/>
                 <filter string="Type" name="bed_type" context="{'group_by':'bed'}"/>
             </search>
+        </field>
+    </record>
+
+<!--    Smart button for accommodations-->
+    <record id="accommodation_smart_button" model="ir.ui.view">
+        <field name="name">View Accommodation</field>
+        <field name="model">room.management</field>
+        <field name="inherit_id" ref="room_management.form"/>
+        <field name="arch" type="xml">
+            <div class="oe_button_box" name="button_box" position="inside">
+                <button class="oe_stat_button" type="object"
+                        name="get_accommodation" icon="fa-globe icon"
+                attrs="{'invisible': [('accommodation_count', '=', 0)]}">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text"><field name="accommodation_count"/></span>
+                        <span class="o_stat_text"><field name="accommodations_id"
+                               widget="statinfo" string="Accommodation"/></span>
+<!--                        <span class="o_stat_text">Accommodations</span>-->
+                    </div>
+                </button>
+            </div>
         </field>
     </record>
 

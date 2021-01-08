@@ -33,23 +33,22 @@
                                        'show_address': 1, 'show_vat': True}"
                                        options='{"always_reload": True}'/>
                                 <field name="guest_count"/>
-                                <field name="attachment_ids"
-                                       widget="many2many_binary"/>
+                                <field name="expected_days"
+                                       states="draft,checkin"/>
+                                <field name="expected_date"
+                                       states="draft,checkin"  readonly="1"
+                                       force_save="1"/>
                             </group>
                             <group col="1">
                                 <field name="bed"/>
                                 <field name="facilities_ids" widget="many2many_tags"
                                        options="{'no_create_edit': True, 'no_create': True}"
                                        force_save="1" />
-                                <field name="room_no_id"  widget="selection"/>
-                                <field name="expected_days"
-                                       states="draft, checkin"/>
-                                <field name="expected_date"
-                                       states="draft, checkin"  readonly="1"
-                                       force_save="1"/>
+                                <field name="room_no_id"  widget="selection"
+                                    attrs="{'readonly': [('state','!=', 'draft')]}"/>
                                 <field name="check_in"/>
-                                <field name="check_out"/>
-<!--                                <field name="orders_id" widget="many2many_tags"/>-->
+                                <field name="check_out" states="checkout"/>
+                                <field name="rent" readonly="1"/>
                             </group>
                         </group>
                         <notebook>
