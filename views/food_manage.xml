@@ -10,6 +10,8 @@
                         <group style="width:60%%">
                             <field name="food_name"/>
                             <field name="category_id"/>
+                            <field name="accommodation_id" force_save="1"/>
+                            <field name="description"/>
                             <field name="image"/>
                             <field name="price"/>
                         </group>
@@ -47,6 +49,7 @@
             <field name="name">Food</field>
             <field name="res_model">room.food</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('category_id.id', '!=', '7')]</field>
         </record>
 
     <!--    Category view action-->

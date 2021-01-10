@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
+                        <div class="oe_button_box" name="button_box"/>
                         <group col="2" style="width:70%%">
                             <div class="oe_title">
                                     <h1>
@@ -27,9 +28,9 @@
 <!--                                    <button string="Add To List"  name="add_to_list" type="object" class="oe_highlight"/>-->
                                     <field name="category_ids" widget="many2many_checkboxes" icon="fa-cutlery"/>
                                     <field name="product_ids"   widget="many2many_kanban"
-                                               options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}"
-                                               context="{'form_view_ref': 'room_management.order_view_form',
-                                                'default_company_id':'company_id'}">
+                                               options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}">
+<!--                                               context="{'form_view_ref': 'room_management.order_view_form',-->
+<!--                                                'default_company_id':'company_id'}">-->
                                         <kanban quick_create="true" create="true" delete="true">
                                             <field name="id"/>
                                             <field name="food_name"/>
@@ -68,9 +69,10 @@
                                 <tree>
                                     <field name="order_ids">
                                         <tree editable="bottom">
-                                            <field name="food_id"/>
-                                            <field name="price"/>
-                                            <field name="quantity"/>
+                                            <field name="food_id" string="Name"/>
+                                            <field name="description"/>
+                                            <field name="price_sale"/>
+                                            <field name="quantity" force_save="1"/>
                                             <field name="subtotal_price" sum="Total"/>
                                         </tree>
                                     </field>
@@ -85,29 +87,29 @@
             <!--Order food form-->
         <record id="order_view_form" model="ir.ui.view">
             <field name="name">order.view.form</field>
-            <field name="model">food.menu</field>
+            <field name="model">room.food</field>
             <field name="arch" type="xml">
                 <form>
 <!--                    <field name="company_id"/>-->
-<!--                    <field name="order_ids">-->
-                        <div class="d-flex">
+                    <field name="order_id">
+                        <div class="o_lunch_wizard">
+                            <span>Test</span>
                             <div class="flex-grow-0 pr-5">
-                                <field name="image" widget="image" class="o_lunch_image" options="{'image_preview': 'image_128'}"/>
+                                <field name="image_view" widget="image" class="o_lunch_image" options="{'image_preview': 'image_128'}"/>
                             </div>
                             <div class="flex-grow-1 pr-5">
-<!--                                <h2><field name="food_id"/></h2>-->
-                                <h3 class="pt-3"><field name="price" widget="monetary"/></h3>
-<!--                                <h3 class="pt-3"><field name="category_ids"/></h3>-->
-<!--                                    <h3 class="pt-3"><field name="quantity"/></h3>-->
+                                <h2><field name="food_name"/></h2>
+                                <h3 class="pt-3"><field name="price_sale" widget="monetary"/></h3>
+                                <h3 class="pt-3"><field name="category_id"/></h3>
+                                    <h3 class="pt-3"><field name="quantity"/></h3>
 <!--                                <field name="accommodation_id"/>-->
                             </div>
                         </div>
-<!--                    </field>-->
+                    </field>
                     <footer>
-                            <button string="Add To List"
-                                    type="object" class="oe_highlight"
-                                    special="save"/>
-<!--                        <button string="Discard" special="cancel"/>-->
+                        <button string="Add To List"
+                                type="object" class="oe_highlight"
+                                special="save"/>
                     </footer>
                 </form>
             </field>
@@ -127,18 +129,24 @@
             </field>
         </record>
 
-<!--        <record id="food_menu_orders" model="ir.ui.view">-->
-<!--            <field name="name">Orders</field>-->
-<!--            <field name="model">food.menu</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <tree>-->
-<!--                    <field name="accommodation_id"/>-->
-<!--                    <field name="food_id"/>-->
-<!--                    <field name="quantity"/>-->
-<!--                    <field name="order_id"/>-->
-<!--                </tree>-->
-<!--            </field>-->
-<!--        </record>-->
+<!--        Smart button to accommodation-->
+        <record id="order_food_smart_button" model="ir.ui.view">
+            <field name="name">Accommodation</field>
+            <field name="model">order.food</field>
+            <field name="inherit_id" ref="order_food_form"/>
+            <field name="arch" type="xml">
+                <div class="oe_button_box" name="button_box" position="inside">
+                    <button class="oe_stat_button" type="object"
+                            name="get_accommodation" icon="fa-globe icon">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text"><field name="accommodation_id"
+                                   widget="statinfo" string="Accommodation" invisible="1"/></span>
+                            <span class="o_stat_text">Accommodation</span>
+                        </div>
+                    </button>
+                </div>
+            </field>
+        </record>
 
 <!--        Action for Order food Menu-->
         <record id="order_food_action" model="ir.actions.act_window">

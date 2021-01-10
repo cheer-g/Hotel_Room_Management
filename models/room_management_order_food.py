@@ -28,7 +28,7 @@ class OrderFood(models.Model):
     price = fields.Float(string="Price")
     image = fields.Image(related='product_ids.image')
     quantity = fields.Integer(string="Quantity")
-    order_ids = fields.One2many('food.menu', 'order_id')
+    order_ids = fields.One2many('room.food', 'order_id')
 
     @api.onchange('room_no_id')
     def _onchange_room_no_id(self):
@@ -65,11 +65,6 @@ class OrderFood(models.Model):
         """
         To retrieve lunch products based on category
         """
-        # print("Testtest : ", rec.category_ids.ids)
-        # return {'domain': {'product_ids':
-        #                        [('category_id', 'in',
-        #                          rec.category_ids.ids)]}}
-
         result = self.env['room.food'].search(
             [('category_id', 'in', self.category_ids.ids)])
         print("test : ", result)
@@ -89,44 +84,55 @@ class OrderFood(models.Model):
             'target': 'new'
         }
 
+    def get_accommodation(self):
+        print("Acco :", self.accommodation_id)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Accommodation',
+            'res_model': 'room.accommodation',
+            'view_mode': 'tree,form',
+            'domain': [('id', '=', self.accommodation_id.id)],
+            'context': " {'create': False, 'create_edit': False}"
+        }
+
 
 class FoodMenu(models.Model):
     _name = 'food.menu'
     _description = 'Food Menu'
-    _rec_name = 'food_id'
+    # _rec_name = 'food_id'
 
-    def _compute_subtotal_price(self):
-        """
-        Compute total price based on the quantity ordered
-        """
-        # print("Acco :", self.accommodation_entry)
-        for rec in self:
-            rec.subtotal_price = rec.price * rec.quantity
-
-    order_id = fields.Many2one('order.food')
-    accommodation_id = fields.Many2one('room.accommodation',
-                                          related='order_id.accommodation_id',
-                                       string="Accommodation ID")
-    quantity = fields.Integer(string="Quantity", default='1')
-    image = fields.Image(related='food_id.image')
-    food_id = fields.Many2one('room.food')
-    price = fields.Float(related='food_id.price')
-    subtotal_price = fields.Float(compute=_compute_subtotal_price,
-                                  string="Subtotal")
-    amount_total = fields.Float()
-    category_id = fields.Char()
-
-    def add_to_list(self):
-        """
-           Add to list function
-        """
-        print("View check")
-        return {
-            'name': 'Add to list',
-            'type': 'ir.actions.act_window',
-            'res_model': 'food.menu',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'new'
-        }
-
+    # def _compute_subtotal_price(self):
+    #     """
+    #     Compute total price based on the quantity ordered
+    #     """
+    #     # print("Acco :", self.accommodation_entry)
+    #     for rec in self:
+    #         rec.subtotal_price = rec.price * rec.quantity
+    #
+    # order_id = fields.Many2one('order.food')
+    # accommodation_id = fields.Many2one('room.accommodation',
+    #                                       related='order_id.accommodation_id',
+    #                                    string="Accommodation ID")
+    # quantity = fields.Integer(string="Quantity", default='1')
+    # image = fields.Image(related='food_id.image')
+    # food_id = fields.Many2one('room.food')
+    # price = fields.Float(related='food_id.price')
+    # subtotal_price = fields.Float(compute=_compute_subtotal_price,
+    #                               string="Subtotal")
+    # amount_total = fields.Float()
+    # category_id = fields.Char()
+    #
+    # def add_to_list(self):
+    #     """
+    #        Add to list function
+    #     """
+    #     print("View check")
+    #     return {
+    #         'name': 'Add to list',
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'food.menu',
+    #         'view_mode': 'form',
+    #         'view_type': 'form',
+    #         'target': 'new'
+    #     }
+    #

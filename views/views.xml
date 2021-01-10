@@ -72,8 +72,8 @@
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text"><field name="accommodation_count"/></span>
                         <span class="o_stat_text"><field name="accommodations_id"
-                               widget="statinfo" string="Accommodation"/></span>
-<!--                        <span class="o_stat_text">Accommodations</span>-->
+                               widget="statinfo" string="Accommodation" invisible="1"/></span>
+                        <span class="o_stat_text">Records</span>
                     </div>
                 </button>
             </div>

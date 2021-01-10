@@ -17,10 +17,10 @@ class Accommodation(models.Model):
     def _compute_orders_id(self):
         """Display corresponding orders"""
         for rec in self:
-            result_id = self.env['food.menu'].search([
-                ('accommodation_id', '=', rec.seq_no)
+            result_id = self.env['room.food'].search([
+                ('accommodation_id', '=', 'HM/ROOM/036')
             ])
-            print(result_id)
+            print("Orders", result_id)
             self.update({'orders_id': result_id})
 
     def _compute_rent(self):
@@ -76,7 +76,7 @@ class Accommodation(models.Model):
     #                                  readonly="False",
     #                                  domain=[('accommodation_id', '=',
     #                                           seq_no)])
-    orders_id = fields.One2many('food.menu', 'accommodation_id',
+    orders_id = fields.One2many('room.food', 'accommodation_id',
                                 compute=_compute_orders_id)
 
     @api.onchange('expected_days')
@@ -163,10 +163,22 @@ class Accommodation(models.Model):
         Makes the room available and change state to checkout
         """
         for rec in self:
-            self.room_no_id.state = 'available'
-            self.room_no_id.accommodation_seq = 'Not Assigned'
+            rec.room_no_id.state = 'available'
+            rec.room_no_id.accommodation_seq = 'Not Assigned'
             rec.state = 'checkout'
-            self.check_out = fields.Datetime.now()
+            rec.check_out = fields.Datetime.now()
+        days = rec.check_out - rec.check_in
+        columns = {
+            'accommodation_id': self.id,
+            'order_id': self.orders_id.order_id,
+            'category_id': '7',
+            'quantity': days.days+1,
+            'food_name': "Rent",
+            'description': "Rent for days",
+            'price_sale': self.rent
+        }
+        print("Out test: ", columns)
+        self.env['room.food'].create(columns)
 
     def action_cancel(self):
         """
