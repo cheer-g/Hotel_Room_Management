@@ -28,15 +28,15 @@
 <!--                                    <button string="Add To List"  name="add_to_list" type="object" class="oe_highlight"/>-->
                                     <field name="category_ids" widget="many2many_checkboxes" icon="fa-cutlery"/>
                                     <field name="product_ids"   widget="many2many_kanban"
-                                               options="{'no_create_edit':True, 'no_create':True, 'not_delete': True}">
-<!--                                               context="{'form_view_ref': 'room_management.order_view_form',-->
-<!--                                                'default_company_id':'company_id'}">-->
-                                        <kanban quick_create="true" create="true" delete="true">
+                                               context="{'form_view_ref': 'room_management.order_view_form',
+                                                'default_company_id':'company_id'}">
+                                        <kanban js_class="lunch_kanban" create="0" edit="0" group_create="0" class="o_kanban_mobile">
+<!--                                                quick_create="true" create="true" delete="true">-->
                                             <field name="id"/>
                                             <field name="food_name"/>
                                             <templates>
                                                 <t t-name="kanban-box">
-                                                    <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_kanban_record">
+                                                    <div class="oe_kanban_global_click_edit o_kanban_record_has_image_fill o_kanban_record">
                                                         <field name="image"
                                                                class="o_lunch_image o_kanban_image_fill_left d-none d-md-block"
                                                                options="{'placeholder': '/lunch/static/img/lunch.png', 'size': [94, 94]}"
@@ -66,14 +66,17 @@
                                 </group>
                             </page>
                             <page string="Order List">
-                                <tree>
+                                <tree editable="bottom">
                                     <field name="order_ids">
                                         <tree editable="bottom">
+                                            <field name="currency_id" invisible="1"/>
                                             <field name="food_id" string="Name"/>
                                             <field name="description"/>
-                                            <field name="price_sale"/>
+                                            <field name="price_sale"
+                                                   widget="monetary" force_save="1"/>
                                             <field name="quantity" force_save="1"/>
-                                            <field name="subtotal_price" sum="Total"/>
+                                            <field name="subtotal_price"
+                                                   sum="Total" widget="monetary"/>
                                         </tree>
                                     </field>
                                 </tree>
@@ -87,30 +90,36 @@
             <!--Order food form-->
         <record id="order_view_form" model="ir.ui.view">
             <field name="name">order.view.form</field>
-            <field name="model">room.food</field>
+            <field name="model">food.menu</field>
             <field name="arch" type="xml">
+<!--                <form>-->
+<!--&lt;!&ndash;                    <field name="company_id"/>&ndash;&gt;-->
+<!--                    <field name="order_id">-->
+<!--                        <div class="o_lunch_wizard">-->
+<!--                            <span>Test</span>-->
+<!--                            <div class="flex-grow-0 pr-5">-->
+<!--                                <field name="image_view" widget="image" class="o_lunch_image" options="{'image_preview': 'image_128'}"/>-->
+<!--                            </div>-->
+<!--                            <div class="flex-grow-1 pr-5">-->
+<!--                                <h2><field name="food_name"/></h2>-->
+<!--                                <h3 class="pt-3"><field name="price_sale" widget="monetary"/></h3>-->
+<!--                                <h3 class="pt-3"><field name="category_id"/></h3>-->
+<!--                                    <h3 class="pt-3"><field name="quantity"/></h3>-->
+<!--&lt;!&ndash;                                <field name="accommodation_id"/>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </field>-->
+<!--                    <footer>-->
+<!--                        <button string="Add To List"-->
+<!--                                type="object" class="oe_highlight"-->
+<!--                                special="save"/>-->
+<!--                    </footer>-->
+<!--                </form>-->
                 <form>
-<!--                    <field name="company_id"/>-->
-                    <field name="order_id">
-                        <div class="o_lunch_wizard">
-                            <span>Test</span>
-                            <div class="flex-grow-0 pr-5">
-                                <field name="image_view" widget="image" class="o_lunch_image" options="{'image_preview': 'image_128'}"/>
-                            </div>
-                            <div class="flex-grow-1 pr-5">
-                                <h2><field name="food_name"/></h2>
-                                <h3 class="pt-3"><field name="price_sale" widget="monetary"/></h3>
-                                <h3 class="pt-3"><field name="category_id"/></h3>
-                                    <h3 class="pt-3"><field name="quantity"/></h3>
-<!--                                <field name="accommodation_id"/>-->
-                            </div>
-                        </div>
-                    </field>
-                    <footer>
-                        <button string="Add To List"
-                                type="object" class="oe_highlight"
-                                special="save"/>
-                    </footer>
+                    <field name="food_id"/>
+                    <field name="description"/>
+                    <field name="price_sale" force_save="1"/>
+                    <field name="quantity"/>
                 </form>
             </field>
         </record>

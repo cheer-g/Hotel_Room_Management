@@ -17,11 +17,13 @@ class Accommodation(models.Model):
     def _compute_orders_id(self):
         """Display corresponding orders"""
         for rec in self:
-            result_id = self.env['room.food'].search([
-                ('accommodation_id', '=', 'HM/ROOM/036')
+            result_id = self.env['food.menu'].search([
+                ('accommodation_id', '=', rec.seq_no)
             ])
-            print("Orders", result_id)
-            self.update({'orders_id': result_id})
+            if result_id:
+                self.update({'orders_id': result_id.ids})
+            else:
+                self.update({'orders_id': False})
 
     def _compute_rent(self):
         """Compute rent based on no. of days"""
@@ -36,6 +38,12 @@ class Accommodation(models.Model):
                     rec.rent = (days.days + 1) * rec.room_no_id.rent
             else:
                 rec.rent = rec.room_no_id.rent
+
+    def _compute_orders_count(self):
+        for rec in self:
+            lists = self.env['order.food'].search([
+                ('accommodation_id', '=', rec.seq_no)])
+            rec.orders_count = len(lists)
 
     seq_no = fields.Char(string="Sequence No.", required="True",
                          readonly="True", copy="False",
@@ -63,7 +71,7 @@ class Accommodation(models.Model):
         'res.currency', string='Currency',
         default=lambda self: self.env.user.company_id.currency_id.id,
         required=True)
-    rent = fields.Monetary(string="Rent", compute=_compute_rent)
+    rent = fields.Float(string="Rent", compute=_compute_rent)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('checkin', 'Check-In'),
@@ -76,8 +84,9 @@ class Accommodation(models.Model):
     #                                  readonly="False",
     #                                  domain=[('accommodation_id', '=',
     #                                           seq_no)])
-    orders_id = fields.One2many('room.food', 'accommodation_id',
+    orders_id = fields.One2many('food.menu', 'accommodation_id',
                                 compute=_compute_orders_id)
+    orders_count = fields.Integer(compute=_compute_orders_count)
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -130,14 +139,6 @@ class Accommodation(models.Model):
         result = super(Accommodation, self).create(vals)
         return result
 
-    # @api.onchange('expected_days')
-    # def _compute_expected_date(self):
-    #     """
-    #      Computing expected date based on expected days
-    #     """
-    #     today = fields.Date.today()
-    #     self.expected_date = today + datetime.timedelta(days=self.expected_days)
-
     def action_checkin(self):
         """
          Change state to checkin and update check_in field using Confirm button
@@ -167,18 +168,20 @@ class Accommodation(models.Model):
             rec.room_no_id.accommodation_seq = 'Not Assigned'
             rec.state = 'checkout'
             rec.check_out = fields.Datetime.now()
-        days = rec.check_out - rec.check_in
+
+            days = rec.check_out - rec.check_in
+            order_id = rec.orders_id[0].order_id.id
+            print("Order Id: ", order_id)
         columns = {
             'accommodation_id': self.id,
-            'order_id': self.orders_id.order_id,
+            'order_id': order_id,
             'category_id': '7',
             'quantity': days.days+1,
-            'food_name': "Rent",
+            'food_id': "80",
             'description': "Rent for days",
-            'price_sale': self.rent
-        }
+            'price_sale': self.rent}
         print("Out test: ", columns)
-        self.env['room.food'].create(columns)
+        self.env['food.menu'].create(columns)
 
     def action_cancel(self):
         """
@@ -189,6 +192,16 @@ class Accommodation(models.Model):
             self.room_no_id.accommodation_seq = 'Not Assigned'
             self.room_no_id.state = 'available'
 
+    def get_orders(self):
+        """Smart button"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Orders',
+            'view_mode': 'tree,form',
+            'res_model': 'order.food',
+            'domain': [('accommodation_id', '=', self.id)],
+            'context': "{'create': False}"
+        }
 
 class AdditionalGuests(models.Model):
     _name = 'room.guests'

@@ -8,12 +8,14 @@
                 <form>
                     <sheet>
                         <group style="width:60%%">
-                            <field name="food_name"/>
+                            <field name="food_name" string="Name"/>
                             <field name="category_id"/>
-                            <field name="accommodation_id" force_save="1"/>
+<!--                            <field name="order_id"/>-->
+<!--                            <field name="accommodation_id" force_save="1"/>-->
                             <field name="description"/>
-                            <field name="image"/>
-                            <field name="price"/>
+                            <field name="image" widget="image"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="price" widget="monetary"/>
                         </group>
                     </sheet>
                 </form>
@@ -28,7 +30,8 @@
                 <tree sample="1">
                     <field name="food_name"/>
                     <field name="category_id"/>
-                    <field name="price"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="price" widget="monetary"/>
                 </tree>
             </field>
         </record>
