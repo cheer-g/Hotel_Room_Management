@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from datetime import datetime, timedelta
 
 
 class Accommodation(models.Model):
@@ -17,7 +18,7 @@ class Accommodation(models.Model):
     def _compute_orders_id(self):
         """Display corresponding orders"""
         for rec in self:
-            result_id = self.env['food.menu'].search([
+            result_id = self.env['room.food'].search([
                 ('accommodation_id', '=', rec.seq_no)
             ])
             if result_id:
@@ -30,14 +31,27 @@ class Accommodation(models.Model):
         for rec in self:
             if rec.check_in:
                 if rec.check_out:
-                    days = rec.check_out - rec.check_in
-                    print("Days : ", days.days)
-                    rec.rent = (days.days+1) * rec.room_no_id.rent
+                    init_date = rec.check_in.strftime("%Y-%m-%d")
+                    end_date = rec.check_out.strftime("%Y-%m-%d")
+                    checkin_date = datetime.strptime(init_date, '%Y-%m-%d')
+                    checkout_date = datetime.strptime(end_date, '%Y-%m-%d')
+                    days = str((checkout_date - checkin_date).days)
+                    print("New days: ", int(days) + 1)
+                    rec.days_stay = (int(days)+1)
+                    rent = (int(days) + 1) * rec.room_no_id.rent
                 else:
-                    days = fields.datetime.today() - rec.check_in
-                    rec.rent = (days.days + 1) * rec.room_no_id.rent
+                    init_date = rec.check_in.strftime("%Y-%m-%d")
+                    end_date = fields.Datetime.today().strftime("%Y-%m-%d")
+                    checkin_date = datetime.strptime(init_date, '%Y-%m-%d')
+                    checkout_date = datetime.strptime(end_date, '%Y-%m-%d')
+                    days = str((checkout_date - checkin_date).days)
+                    print("New days: ", int(days)+1)
+                    rec.days_stay = int(days) + 1
+                    rent = (int(days) + 1) * rec.room_no_id.rent
             else:
-                rec.rent = rec.room_no_id.rent
+                rent = rec.room_no_id.rent
+        # print("days :", days.days)
+        self.update({'rent': rent})
 
     def _compute_orders_count(self):
         for rec in self:
@@ -76,7 +90,8 @@ class Accommodation(models.Model):
         ('draft', 'Draft'),
         ('checkin', 'Check-In'),
         ('checkout', 'Check-Out'),
-        ('cancel', 'Cancelled')
+        ('cancel', 'Cancelled'),
+        ('paid', 'Paid')
     ], string="Status", readonly="True",
         default="draft", tracking=1, tracking_visibility='always')
     current_date = fields.Datetime(default=fields.Date.today())
@@ -84,9 +99,10 @@ class Accommodation(models.Model):
     #                                  readonly="False",
     #                                  domain=[('accommodation_id', '=',
     #                                           seq_no)])
-    orders_id = fields.One2many('food.menu', 'accommodation_id',
+    orders_id = fields.One2many('room.food', 'accommodation_id',
                                 compute=_compute_orders_id)
     orders_count = fields.Integer(compute=_compute_orders_count)
+    days_stay = fields.Integer()
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -94,8 +110,8 @@ class Accommodation(models.Model):
          Computing expected date based on expected days
         """
         if self.expected_days:
-            self.expected_date = fields.Datetime.now() + datetime.timedelta(
-                self.expected_days-1)
+            self.expected_date = fields.Datetime.now() + \
+                                 timedelta(self.expected_days - 1)
         else:
             self.expected_date = fields.Date.today()
 
@@ -170,18 +186,46 @@ class Accommodation(models.Model):
             rec.check_out = fields.Datetime.now()
 
             days = rec.check_out - rec.check_in
-            order_id = rec.orders_id[0].order_id.id
+            order_id = rec.orders_id[0].order_id
+            rent = rec.rent
             print("Order Id: ", order_id)
         columns = {
-            'accommodation_id': self.id,
-            'order_id': order_id,
+            'accommodation_id': self.seq_no,
+            # 'order_id': order_id,
             'category_id': '7',
-            'quantity': days.days+1,
-            'food_id': "80",
+            'quantity': self.days_stay,
+            'food_name': "Rent",
             'description': "Rent for days",
-            'price_sale': self.rent}
+            'rent': 'True',
+            'price': rent}
         print("Out test: ", columns)
-        self.env['food.menu'].create(columns)
+        self.env['room.food'].create(columns)
+
+    def action_invoice(self):
+        """Create Customer invoice"""
+        invoice_lines = []
+        for rec in self.orders_id:
+            line = (0, 0, {
+                'product_id': rec.food_id,
+                'name': rec.food_name,
+                'price_unit': rec.price,
+                'quantity': rec.quantity,
+                'discount': 0.0,
+            })
+            invoice_lines.append(line)
+        print("Invoices :", invoice_lines)
+        for rec in self:
+            invoice_line = self.env['account.move'].create({
+                'partner_id': self.guest_id.id,
+                'currency_id': self.currency_id.id,
+                'name': self.seq_no,
+                'state': 'draft',
+                'move_type': 'out_invoice',
+                'invoice_date': self.check_out,
+                # 'account_id': self.account_receivable.id,
+                'invoice_line_ids': invoice_lines,
+            })
+        # self.state = 'paid'
 
     def action_cancel(self):
         """
@@ -202,6 +246,7 @@ class Accommodation(models.Model):
             'domain': [('accommodation_id', '=', self.id)],
             'context': "{'create': False}"
         }
+
 
 class AdditionalGuests(models.Model):
     _name = 'room.guests'

@@ -32,6 +32,7 @@
                     <field name="category_id"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="price" widget="monetary"/>
+                    <field name="accommodation_id" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -52,7 +53,7 @@
             <field name="name">Food</field>
             <field name="res_model">room.food</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('category_id.id', '!=', '7')]</field>
+            <field name="domain">[('category_id.id', '!=', ['7', False])]</field>
         </record>
 
     <!--    Category view action-->
