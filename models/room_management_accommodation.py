@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-
-from dateutil.relativedelta import relativedelta
-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from datetime import datetime, timedelta
@@ -127,7 +123,6 @@ class Accommodation(models.Model):
     def onchange_facilities(self):
         """
         For displaying room number based on Bed type and Facilities
-
         """
         if self.facilities_ids:
             return {'domain': {'room_no_id': [('bed', '=', self.bed),
@@ -226,6 +221,14 @@ class Accommodation(models.Model):
                 'invoice_line_ids': invoice_lines,
             })
         # self.state = 'paid'
+        # form_view_id = self.env.ref("sale.view_sale_advance_payment_inv").id
+        # return {
+        #     'type': 'ir.actions.act_window',
+        #     'name': 'Invoice',
+        #     'view_mode': 'form',
+        #     'res_model': 'account.move',
+        #     'view_id': form_view_id
+        # }
 
     def action_cancel(self):
         """

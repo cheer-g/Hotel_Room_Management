@@ -40,7 +40,7 @@ class FoodItems(models.Model):
     #                                    string="Accommodation ID")
     orders_id = fields.Char()
     accommodation_id = fields.Char()
-    quantity = fields.Integer(string="Quantity")
+    quantity = fields.Integer(string="Quantity", store="True")
     image_view = fields.Image(related='food_id.image')
     food_id = fields.Many2one('room.food')
     description_view = fields.Text(related='food_id.description')
@@ -57,17 +57,19 @@ class FoodItems(models.Model):
             print("Food Id:", rec.id)
         for rec in self:
             columns = {
-                # 'accommodation_id': rec.accommodation_id,
-                # 'orders_id': rec.orders_id,
-                'food_id': rec.food_id,
-                'quantity': "1",
+                'accommodation_id': rec.accommodation_id,
+                'orders_id': rec.order_id.order_sequence,
+                'food_id': rec.id,
+                'quantity': rec.quantity,
                 'food_name': rec.food_name,
-                # 'description': rec.description,
-                # 'rent': 'True',
-                # 'price': rec.price
+                'description': rec.description,
+                'rent': 'False',
+                'price': rec.price
                 }
         print("Out test: ", columns)
-        self.env['room.food'].create(columns)
+        self.order_id.orders = columns
+        # print("Id :", )
+        # self.env['room.food'].create(columns)
 
 
 class FoodCategory(models.Model):

@@ -12,7 +12,7 @@ class OrderFood(models.Model):
     def _compute_order_ids(self):
         for rec in self:
             result = self.env['room.food'].search([
-                ('orders_id', '=', rec.order_sequence)])
+                ('accommodation_id', '=', rec.accommodation_id.seq_no)])
             print("Result :", result)
             rec.update({'order_ids': result})
 
@@ -31,18 +31,10 @@ class OrderFood(models.Model):
     category_ids = fields.Many2many('food.category', string='Category',
                                     required=True,
                                     domain=[('category_name', '!=', 'Rent')])
-    product_ids = fields.Many2many('room.food', string='Product',
-                                   readonly="False")
-    name = fields.Char('Product Name', related='product_ids.food_name')
-    currency_id = fields.Many2one(
-        'res.currency', string='Currency',
-        default=lambda self: self.env.user.company_id.currency_id.id,
-        required=True)
-    price = fields.Float(string="Price")
-    image = fields.Image(related='product_ids.image')
-    # quantity = fields.Integer(string="Quantity")
+    product_ids = fields.Many2many('room.food', string='Product')
     order_ids = fields.One2many('room.food', 'order_id',
                                 compute=_compute_order_ids)
+    orders = fields.Char()
     state = fields.Selection([
         ('draft', 'Draft'),
         ('ordered', 'Ordered'),
@@ -108,7 +100,8 @@ class OrderFood(models.Model):
         for rec in self:
             result = self.env['room.food'].search(
                 [('category_id', 'in', self.category_ids.ids)])
-            result.orders_id = self.order_sequence
+            # result.orders_id = self.order_sequence
+            print("Orders :", rec.orders)
             rec.state = 'ordered'
 
     def action_cancel(self):
@@ -133,12 +126,22 @@ class OrderFood(models.Model):
         }
 
 
-
 class FoodMenu(models.Model):
     _name = 'food.menu'
     _description = 'Food Menu'
     # _rec_name = 'food_id'
-    #
+
+    food_id = fields.Many2one('room.food')
+    quantity = fields.Integer(default="1")
+
+    def add_to_list(self):
+        """Add to List"""
+        vals = {
+            'food_id': self.food_id,
+            'quantity': self.quantity
+        }
+        self.env['room.food'].create(vals)
+
     # def _compute_subtotal_price(self):
     #     """
     #     Compute total price based on the quantity ordered
