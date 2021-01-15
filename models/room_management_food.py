@@ -39,7 +39,8 @@ class FoodItems(models.Model):
     #                                    related='order_id.accommodation_id',
     #                                    string="Accommodation ID")
     orders_id = fields.Char()
-    accommodation_id = fields.Char()
+    accommodation_id = fields.Char(related='order_id.accommodation_id.seq_no')
+    acco_id = fields.Char()
     quantity = fields.Integer(string="Quantity", store="True")
     image_view = fields.Image(related='food_id.image')
     food_id = fields.Many2one('room.food')
@@ -50,6 +51,8 @@ class FoodItems(models.Model):
     rent = fields.Boolean(default=False)
     amount_total = fields.Float()
     category_view = fields.Char()
+    name = fields.Char()
+    order = fields.Boolean(default=False)
 
     def add_to_list(self):
         """Add to list"""
@@ -57,11 +60,13 @@ class FoodItems(models.Model):
             print("Food Id:", rec.id)
         for rec in self:
             columns = {
-                'accommodation_id': rec.accommodation_id,
-                'orders_id': rec.order_id.order_sequence,
-                'food_id': rec.id,
+                'acco_id': rec.acco_id,
+                'orders_id': rec.orders_id,
+                # 'food_id': rec.id,
+                'name': rec.food_name,
                 'quantity': rec.quantity,
-                'food_name': rec.food_name,
+                'order': 'True',
+                # 'food_name': rec.food_name,
                 'description': rec.description,
                 'rent': 'False',
                 'price': rec.price
@@ -69,7 +74,7 @@ class FoodItems(models.Model):
         print("Out test: ", columns)
         self.order_id.orders = columns
         # print("Id :", )
-        # self.env['room.food'].create(columns)
+        self.env['room.food'].create(columns)
 
 
 class FoodCategory(models.Model):

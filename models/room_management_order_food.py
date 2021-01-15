@@ -12,7 +12,8 @@ class OrderFood(models.Model):
     def _compute_order_ids(self):
         for rec in self:
             result = self.env['room.food'].search([
-                ('accommodation_id', '=', rec.accommodation_id.seq_no)])
+                ('orders_id', '=', rec.order_sequence),
+                ('order', '=', 'True')])
             print("Result :", result)
             rec.update({'order_ids': result})
 
@@ -79,7 +80,9 @@ class OrderFood(models.Model):
         """
         result = self.env['room.food'].search(
             [('category_id', 'in', self.category_ids.ids)])
-        result.accommodation_id = self.accommodation_id.seq_no
+        result.orders_id = self.order_sequence
+        result.acco_id = self.accommodation_id.seq_no
+        result.quantity = '0'
         # print("test : ", result.accommodation_id)
         self.update({'product_ids': result})
         # return {'product_ids': result}

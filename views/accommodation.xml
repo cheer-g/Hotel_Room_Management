@@ -70,16 +70,15 @@
                             </page>
                             <page string="Payment" name="payment">
                                 <field name="orders_id">
-                                    <tree create="true" delete="true"
-                                          editable="bottom">
-                                        <field name="food_name" string="Name"/>
-                                        <field name="description"/>
-                                        <field name="quantity"/>
+                                    <tree editable="bottom">
                                         <field name="currency_id" invisible="1"/>
-                                        <field name="price"
-                                               widget="monetary" force_save="1"/>
-                                        <field name="subtotal_price"
-                                               sum="Total" widget="monetary"/>
+                                            <field name="name" string="Name"/>
+                                            <field name="description"/>
+                                            <field name="price" string="Price"
+                                                   widget="monetary" force_save="1"/>
+                                            <field name="quantity" force_save="1"/>
+                                            <field name="subtotal_price"
+                                                   sum="Total" widget="monetary"/>
                                     </tree>
                                 </field>
                             </page>

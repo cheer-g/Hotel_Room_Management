@@ -15,8 +15,10 @@ class Accommodation(models.Model):
         """Display corresponding orders"""
         for rec in self:
             result_id = self.env['room.food'].search([
-                ('accommodation_id', '=', rec.seq_no)
+                ('acco_id', '=', rec.seq_no),
+                ('order', '=', 'True')
             ])
+            print("New Results : ", result_id)
             if result_id:
                 self.update({'orders_id': result_id.ids})
             else:
@@ -47,7 +49,7 @@ class Accommodation(models.Model):
             else:
                 rent = rec.room_no_id.rent
         # print("days :", days.days)
-        self.update({'rent': rent})
+            self.update({'rent': rent})
 
     def _compute_orders_count(self):
         for rec in self:
@@ -180,17 +182,17 @@ class Accommodation(models.Model):
             rec.state = 'checkout'
             rec.check_out = fields.Datetime.now()
 
-            days = rec.check_out - rec.check_in
-            order_id = rec.orders_id[0].order_id
+            # order_id = rec.orders_id[0].order_id
             rent = rec.rent
-            print("Order Id: ", order_id)
+            # print("Order Id: ", order_id)
         columns = {
-            'accommodation_id': self.seq_no,
-            # 'order_id': order_id,
+            'acco_id': self.seq_no,
+            # 'orders_id': order_id.order_sequence,
             'category_id': '7',
             'quantity': self.days_stay,
-            'food_name': "Rent",
+            'name': "Rent",
             'description': "Rent for days",
+            'order': 'True',
             'rent': 'True',
             'price': rent}
         print("Out test: ", columns)
@@ -202,7 +204,7 @@ class Accommodation(models.Model):
         for rec in self.orders_id:
             line = (0, 0, {
                 'product_id': rec.food_id,
-                'name': rec.food_name,
+                'name': rec.name,
                 'price_unit': rec.price,
                 'quantity': rec.quantity,
                 'discount': 0.0,

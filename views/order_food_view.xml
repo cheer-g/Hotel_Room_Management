@@ -36,7 +36,7 @@
                                 <group>
 <!--                                    <button string="Add To List" name="add_to_list" type="object" class="oe_highlight"/>-->
                                     <field name="category_ids" widget="many2many_checkboxes" required="0"/>
-                                    <field name="product_ids"
+                                    <field name="product_ids" widget="many2many_kanban"
                                                context="{'form_view_ref': 'room_management.order_view_form'}">
                                         <kanban js_class="lunch_kanban" class="o_kanban_mobile" edit="1">
                                             <field name="id"/>
@@ -77,7 +77,7 @@
                                     <field name="order_ids">
                                         <tree editable="bottom">
                                             <field name="currency_id" invisible="1"/>
-                                            <field name="food_name" string="Name"/>
+                                            <field name="name" string="Name"/>
                                             <field name="description"/>
                                             <field name="price" string="Price"
                                                    widget="monetary" force_save="1"/>
@@ -111,11 +111,13 @@
                             <field name="image" widget="image" class="o_lunch_image"/>
                         </div>
                         <div class="flex-grow-1 pr-5">
-                            <h2><field name="food_id" readonly="1"/></h2>
+                            <h2><field name="food_name" readonly="1"/></h2>
                             <h3 class="pt-3">Price: <field name="price" widget="monetary" readonly="1"/></h3>
 <!--                            <h3 class="pt-3">Category: <field name="category_id"/></h3>-->
                                 <h3 class="pt-3">Quantity: <field name="quantity"/></h3>
-<!--                            <h3>Accommodation: <field name="accommodation_id"/></h3>-->
+<!--                            <h3>Accommodation: <field name="accommodation_id" readonly="0"/></h3>-->
+<!--                            <h3>Order Id: <field name="order_id"/></h3>-->
+
                         </div>
                     </div>
                     <footer>
@@ -181,10 +183,12 @@
             <field name="name">Orders</field>
             <field name="model">room.food</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree editable="bottom">
+                    <field name="name"/>
                     <field name="food_name"/>
                     <field name="quantity"/>
-                    <field name="accommodation_id"/>
+                    <field name="order"/>
+                    <field name="acco_id" string="Accommodation"/>
                     <field name="orders_id"/>
                 </tree>
             </field>
@@ -193,7 +197,7 @@
         <record id="food_menu_action" model="ir.actions.act_window">
             <field name="name">Orders</field>
             <field name="res_model">room.food</field>
-            <field name="domain">[('category_id', '!=', 'False')]</field>
+<!--            <field name="domain">[('category_id', '!=', 'False')]</field>-->
             <field name="view_mode">tree</field>
             <field name="view_id" ref="room_management.orders_view_tree"/>
         </record>
