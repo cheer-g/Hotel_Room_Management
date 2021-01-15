@@ -70,7 +70,6 @@ class OrderFood(models.Model):
             vals['order_sequence'] = self.env['ir.sequence'].next_by_code(
                 'order.seq') or 'New'
         result = super(OrderFood, self).create(vals)
-        # self.accommodation_id.food_order_ids = result
         return result
 
     @api.onchange('category_ids')
@@ -82,7 +81,7 @@ class OrderFood(models.Model):
             [('category_id', 'in', self.category_ids.ids)])
         result.orders_id = self.order_sequence
         result.acco_id = self.accommodation_id.seq_no
-        result.quantity = '0'
+        result.quantity = '1'
         # print("test : ", result.accommodation_id)
         self.update({'product_ids': result})
         # return {'product_ids': result}
@@ -101,17 +100,12 @@ class OrderFood(models.Model):
     def action_order(self):
         """Action for order button"""
         for rec in self:
-            result = self.env['room.food'].search(
-                [('category_id', 'in', self.category_ids.ids)])
-            # result.orders_id = self.order_sequence
-            print("Orders :", rec.orders)
             rec.state = 'ordered'
 
     def action_cancel(self):
         """Action for cancel button"""
-        # self.env['room.food'].search(
-        #     [('orders_id', '=', self.order_sequence)]).unlink()
-        self.state = 'cancel'
+        for rec in self:
+            rec.state = 'cancel'
 
     def add_to_list(self):
         """

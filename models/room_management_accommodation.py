@@ -11,6 +11,16 @@ class Accommodation(models.Model):
     _inherit = 'mail.thread'
     _rec_name = 'seq_no'
 
+    def _compute_invoice_id(self):
+        """get invoice and check status"""
+        for rec in self:
+            result = self.env['account.move'].search([
+                ('name', '=', rec.seq_no)
+            ])
+            self.update({'invoice_id': result})
+        print("Invoice : ", self.invoice_id.payment_state)
+        self.paid_state = self.invoice_id.payment_state
+
     def _compute_orders_id(self):
         """Display corresponding orders"""
         for rec in self:
@@ -101,6 +111,8 @@ class Accommodation(models.Model):
                                 compute=_compute_orders_id)
     orders_count = fields.Integer(compute=_compute_orders_count)
     days_stay = fields.Integer()
+    invoice_id = fields.Many2one('account.move', compute=_compute_invoice_id)
+    paid_state = fields.Char()
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -188,7 +200,7 @@ class Accommodation(models.Model):
         columns = {
             'acco_id': self.seq_no,
             # 'orders_id': order_id.order_sequence,
-            'category_id': '7',
+            # 'category_id': '7',
             'quantity': self.days_stay,
             'name': "Rent",
             'description': "Rent for days",
@@ -196,9 +208,8 @@ class Accommodation(models.Model):
             'rent': 'True',
             'price': rent}
         print("Out test: ", columns)
-        self.env['room.food'].create(columns)
+        self.env['room.food'].create(columns) #Creating a record for rent
 
-    def action_invoice(self):
         """Create Customer invoice"""
         invoice_lines = []
         for rec in self.orders_id:
@@ -215,6 +226,7 @@ class Accommodation(models.Model):
             invoice_line = self.env['account.move'].create({
                 'partner_id': self.guest_id.id,
                 'currency_id': self.currency_id.id,
+                'l10n_in_gst_treatment': 'consumer',
                 'name': self.seq_no,
                 'state': 'draft',
                 'move_type': 'out_invoice',
@@ -222,15 +234,15 @@ class Accommodation(models.Model):
                 # 'account_id': self.account_receivable.id,
                 'invoice_line_ids': invoice_lines,
             })
-        # self.state = 'paid'
-        # form_view_id = self.env.ref("sale.view_sale_advance_payment_inv").id
-        # return {
-        #     'type': 'ir.actions.act_window',
-        #     'name': 'Invoice',
-        #     'view_mode': 'form',
-        #     'res_model': 'account.move',
-        #     'view_id': form_view_id
-        # }
+            # invoice_line.action_post()
+            return {
+                'name': 'Customer Invoice',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'account.move',
+                'res_id': invoice_line.id
+            }
+            rec.state = 'paid'
 
     def action_cancel(self):
         """

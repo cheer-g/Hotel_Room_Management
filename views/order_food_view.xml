@@ -24,18 +24,21 @@
                                     </h1>
                             </div>
                             <field name="room_no_id" widget="selection"
-                                   options="{'no_create_edit': True, 'no_create': True}"/>
+                                   options="{'no_create_edit': True, 'no_create': True}"
+                                   attrs="{'readonly': [('state','!=', 'draft')]}"/>
                             <field name="accommodation_id" widget="selection" invisible="1"/>
                             <field name="guest_id" widget="selection"
                                    options="{'no_create_edit': True, 'no_create': True}"
-                                   readonly="1" force_save="1" />
+                                   readonly="1" force_save="1"
+                                   attrs="{'readonly': [('state','!=', 'draft')]}"/>
                             <field name="order_time" readonly="1" force_save="1"/>
                         </group>
                         <notebook>
                             <page string="Menu">
                                 <group>
 <!--                                    <button string="Add To List" name="add_to_list" type="object" class="oe_highlight"/>-->
-                                    <field name="category_ids" widget="many2many_checkboxes" required="0"/>
+                                    <field name="category_ids" widget="many2many_checkboxes" required="0"
+                                            attrs="{'readonly': [('state','!=', 'draft')]}"/>
                                     <field name="product_ids" widget="many2many_kanban"
                                                context="{'form_view_ref': 'room_management.order_view_form'}">
                                         <kanban js_class="lunch_kanban" class="o_kanban_mobile" edit="1">
@@ -179,35 +182,35 @@
         </record>
 
 <!--        Tree view for created orders-->
-        <record id="orders_view_tree" model="ir.ui.view">
-            <field name="name">Orders</field>
-            <field name="model">room.food</field>
-            <field name="arch" type="xml">
-                <tree editable="bottom">
-                    <field name="name"/>
-                    <field name="food_name"/>
-                    <field name="quantity"/>
-                    <field name="order"/>
-                    <field name="acco_id" string="Accommodation"/>
-                    <field name="orders_id"/>
-                </tree>
-            </field>
-        </record>
+<!--        <record id="orders_view_tree" model="ir.ui.view">-->
+<!--            <field name="name">Orders</field>-->
+<!--            <field name="model">room.food</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <tree editable="bottom">-->
+<!--                    <field name="name"/>-->
+<!--                    <field name="food_name"/>-->
+<!--                    <field name="quantity"/>-->
+<!--                    <field name="order"/>-->
+<!--                    <field name="acco_id" string="Accommodation"/>-->
+<!--                    <field name="orders_id"/>-->
+<!--                </tree>-->
+<!--            </field>-->
+<!--        </record>-->
 <!--Order view action-->
-        <record id="food_menu_action" model="ir.actions.act_window">
-            <field name="name">Orders</field>
-            <field name="res_model">room.food</field>
-<!--            <field name="domain">[('category_id', '!=', 'False')]</field>-->
-            <field name="view_mode">tree</field>
-            <field name="view_id" ref="room_management.orders_view_tree"/>
-        </record>
+<!--        <record id="food_menu_action" model="ir.actions.act_window">-->
+<!--            <field name="name">Orders</field>-->
+<!--            <field name="res_model">room.food</field>-->
+<!--&lt;!&ndash;            <field name="domain">[('category_id', '!=', 'False')]</field>&ndash;&gt;-->
+<!--            <field name="view_mode">tree</field>-->
+<!--            <field name="view_id" ref="room_management.orders_view_tree"/>-->
+<!--        </record>-->
 
 
 
 <!--        Menu-->
         <menuitem id="order_food_menu" name="Order Food"
                   parent="room_management.reception" action="order_food_action"/>
-        <menuitem id="order_food_orders_menu" name="Orders"
-                  parent="room_management.config" action="food_menu_action"/>
+<!--        <menuitem id="order_food_orders_menu" name="Orders"-->
+<!--                  parent="room_management.config" action="food_menu_action"/>-->
     </data>
 </odoo>
