@@ -82,7 +82,10 @@ class OrderFood(models.Model):
         result.orders_id = self.order_sequence
         result.acco_id = self.accommodation_id.seq_no
         result.quantity = '1'
-        # print("test : ", result.accommodation_id)
+        result.order = 0
+        # for rec in result:
+        #     print("Test :", rec.order)
+        # print("test : ", result.order)
         self.update({'product_ids': result})
         # return {'product_ids': result}
 
@@ -99,12 +102,19 @@ class OrderFood(models.Model):
 
     def action_order(self):
         """Action for order button"""
+        # result = self.env['room.food'].search(
+        #     [('category_id', '=', False)])
+        # result.orders_id = False
+        # result.acco_id = False
         for rec in self:
             rec.state = 'ordered'
 
     def action_cancel(self):
         """Action for cancel button"""
         for rec in self:
+            result = self.env['room.food'].search([
+                ('orders_id', '=', rec.order_sequence), ('order', '=', '1')])
+            result.acco_id = 'False'
             rec.state = 'cancel'
 
     def add_to_list(self):

@@ -71,11 +71,12 @@
                                 <field name="orders_id">
                                     <tree editable="bottom">
                                         <field name="currency_id" invisible="1"/>
-                                            <field name="name" string="Name"/>
-                                            <field name="description"/>
-                                            <field name="price" string="Price"
-                                                   widget="monetary" force_save="1"/>
+                                            <field name="name" string="Description"/>
+<!--                                            <field name="description"/>-->
                                             <field name="quantity" force_save="1"/>
+                                            <field name="uom_id" string="UoM"/>
+                                             <field name="price" string="Unit Price"
+                                                   widget="monetary" force_save="1"/>
                                             <field name="subtotal_price"
                                                    sum="Total" widget="monetary"/>
                                     </tree>

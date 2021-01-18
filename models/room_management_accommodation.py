@@ -19,15 +19,15 @@ class Accommodation(models.Model):
             ])
             self.update({'invoice_id': result})
         print("Invoice : ", self.invoice_id.payment_state)
-        self.paid_state = self.invoice_id.payment_state
+        # self.paid_state = self.invoice_id.payment_state
+        self.update({'paid_state': self.invoice_id.payment_state})
 
     def _compute_orders_id(self):
         """Display corresponding orders"""
         for rec in self:
             result_id = self.env['room.food'].search([
                 ('acco_id', '=', rec.seq_no),
-                ('order', '=', 'True')
-            ])
+                ('order', '=', 'True')])
             print("New Results : ", result_id)
             if result_id:
                 self.update({'orders_id': result_id.ids})
@@ -60,6 +60,10 @@ class Accommodation(models.Model):
                 rent = rec.room_no_id.rent
         # print("days :", days.days)
             self.update({'rent': rent})
+            result = self.env['room.food'].search([
+                ('name', '=', 'Rent'), ('acco_id', '=', self.seq_no)
+            ])
+            result.quantity = self.days_stay
 
     def _compute_orders_count(self):
         for rec in self:
@@ -112,7 +116,7 @@ class Accommodation(models.Model):
     orders_count = fields.Integer(compute=_compute_orders_count)
     days_stay = fields.Integer()
     invoice_id = fields.Many2one('account.move', compute=_compute_invoice_id)
-    paid_state = fields.Char()
+    paid_state = fields.Char(compute=_compute_invoice_id)
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -179,10 +183,29 @@ class Accommodation(models.Model):
                 self.room_no_id.accommodation_seq = rec.seq_no
                 self.check_in = fields.Datetime.now()
                 rec.state = 'checkin'
+                rent = rec.rent
             else:
                 rec.state = 'draft'
                 raise UserError(
                     _('Please provide all guests details'))
+
+        rent_product = self.env['product.product'].search([
+            ('name', '=', 'Rent')])
+        rent_uom = self.env['room.food'].search(
+            [('food_name', '=', 'Rent')])
+        print("UOM :", rent_uom.uom_id)
+        columns = {
+            'acco_id': self.seq_no,
+            'food_id': rent_product.id,
+            'quantity': self.days_stay,
+            'name': "Rent",
+            'description': "Rent",
+            'uom_id': rent_uom.uom_id.id,
+            'order': 'True',
+            'rent': 'True',
+            'price': rent}
+        print("Out test: ", columns)
+        self.env['room.food'].create(columns)  # Creating a record for rent
 
     def action_checkout(self):
         """
@@ -197,24 +220,24 @@ class Accommodation(models.Model):
             # order_id = rec.orders_id[0].order_id
             rent = rec.rent
             # print("Order Id: ", order_id)
-        columns = {
-            'acco_id': self.seq_no,
-            # 'orders_id': order_id.order_sequence,
-            # 'category_id': '7',
-            'quantity': self.days_stay,
-            'name': "Rent",
-            'description': "Rent for days",
-            'order': 'True',
-            'rent': 'True',
-            'price': rent}
-        print("Out test: ", columns)
-        self.env['room.food'].create(columns) #Creating a record for rent
+        # columns = {
+        #     'acco_id': self.seq_no,
+        #     # 'orders_id': order_id.order_sequence,
+        #     # 'category_id': '7',
+        #     'quantity': self.days_stay,
+        #     'name': "Rent",
+        #     'description': "Rent for days",
+        #     'order': 'True',
+        #     'rent': 'True',
+        #     'price': rent}
+        # print("Out test: ", columns)
+        # self.env['room.food'].create(columns) #Creating a record for rent
 
         """Create Customer invoice"""
         invoice_lines = []
         for rec in self.orders_id:
             line = (0, 0, {
-                'product_id': rec.food_id,
+                'product_id': rec.food_id.id,
                 'name': rec.name,
                 'price_unit': rec.price,
                 'quantity': rec.quantity,

@@ -16,6 +16,8 @@
                             <field name="image" widget="image"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="price" widget="monetary"/>
+                            <field name="uom_id"/>
+<!--                            <field name="order"/>-->
                         </group>
                     </sheet>
                 </form>

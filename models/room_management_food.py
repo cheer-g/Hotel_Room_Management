@@ -12,7 +12,6 @@ class FoodItems(models.Model):
         """
         Compute total price based on the quantity ordered
         """
-        # print("Acco :", self.accommodation_entry)
         for rec in self:
             rec.subtotal_price = rec.price * rec.quantity
 
@@ -53,6 +52,7 @@ class FoodItems(models.Model):
     category_view = fields.Char()
     name = fields.Char()
     order = fields.Boolean(default=False)
+    uom_id = fields.Many2one('uom.uom', string="UoM")
 
     def add_to_list(self):
         """Add to list"""
@@ -65,7 +65,8 @@ class FoodItems(models.Model):
                 # 'food_id': rec.id,
                 'name': rec.food_name,
                 'quantity': rec.quantity,
-                'order': 'True',
+                'order': '1',
+                'uom_id': rec.uom_id.id,
                 # 'food_name': rec.food_name,
                 'description': rec.description,
                 'rent': 'False',
