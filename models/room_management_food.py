@@ -1,6 +1,6 @@
 # -*- coding : utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class FoodItems(models.Model):
@@ -34,15 +34,13 @@ class FoodItems(models.Model):
     description = fields.Text()
 
     order_id = fields.Many2one('order.food')
-    # accommodation_id = fields.Many2one('room.accommodation',
-    #                                    related='order_id.accommodation_id',
-    #                                    string="Accommodation ID")
     orders_id = fields.Char()
     accommodation_id = fields.Char(related='order_id.accommodation_id.seq_no')
     acco_id = fields.Char()
     quantity = fields.Integer(string="Quantity", store="True")
     image_view = fields.Image(related='food_id.image')
     food_id = fields.Many2one('room.food')
+    product_id = fields.Integer()
     description_view = fields.Text(related='food_id.description')
     price_view = fields.Float(compute=_compute_price)
     subtotal_price = fields.Float(compute=_compute_subtotal_price,
@@ -56,13 +54,13 @@ class FoodItems(models.Model):
 
     def add_to_list(self):
         """Add to list"""
-        for rec in self.food_id:
-            print("Food Id:", rec.id)
+        food_product = self.env['product.product'].search([
+            ('name', '=', 'Food Item')])
         for rec in self:
             columns = {
                 'acco_id': rec.acco_id,
                 'orders_id': rec.orders_id,
-                # 'food_id': rec.id,
+                'product_id': food_product.id,
                 'name': rec.food_name,
                 'quantity': rec.quantity,
                 'order': '1',
@@ -72,9 +70,7 @@ class FoodItems(models.Model):
                 'rent': 'False',
                 'price': rec.price
                 }
-        print("Out test: ", columns)
         self.order_id.orders = columns
-        # print("Id :", )
         self.env['room.food'].create(columns)
 
 

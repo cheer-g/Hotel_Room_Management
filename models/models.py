@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class RoomManagement(models.Model):
@@ -13,7 +13,6 @@ class RoomManagement(models.Model):
             lists = self.env['room.accommodation'].search([
                 ('room_no_id', '=', rec.room_no)])
             rec.accommodation_count = len(lists)
-
 
     room_no = fields.Char(required="True")
     bed = fields.Selection(selection=[('single', 'Single'),
@@ -40,6 +39,7 @@ class RoomManagement(models.Model):
         ('Room_no', 'unique (room_no)', 'This Room No. Already exist!')]
 
     def get_accommodation(self):
+        """For smart button"""
         return {
             'type': 'ir.actions.act_window',
             'name': 'Accommodations',

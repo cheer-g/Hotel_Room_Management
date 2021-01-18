@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-from datetime import datetime, timedelta
 
 
 class Accommodation(models.Model):
@@ -18,8 +18,6 @@ class Accommodation(models.Model):
                 ('name', '=', rec.seq_no)
             ])
             self.update({'invoice_id': result})
-        print("Invoice : ", self.invoice_id.payment_state)
-        # self.paid_state = self.invoice_id.payment_state
         self.update({'paid_state': self.invoice_id.payment_state})
 
     def _compute_orders_id(self):
@@ -28,11 +26,10 @@ class Accommodation(models.Model):
             result_id = self.env['room.food'].search([
                 ('acco_id', '=', rec.seq_no),
                 ('order', '=', 'True')])
-            print("New Results : ", result_id)
             if result_id:
-                self.update({'orders_id': result_id.ids})
+                self.update({'orders_ids': result_id.ids})
             else:
-                self.update({'orders_id': False})
+                self.update({'orders_ids': False})
 
     def _compute_rent(self):
         """Compute rent based on no. of days"""
@@ -44,8 +41,7 @@ class Accommodation(models.Model):
                     checkin_date = datetime.strptime(init_date, '%Y-%m-%d')
                     checkout_date = datetime.strptime(end_date, '%Y-%m-%d')
                     days = str((checkout_date - checkin_date).days)
-                    print("New days: ", int(days) + 1)
-                    rec.days_stay = (int(days)+1)
+                    rec.days_stay = (int(days) + 1)
                     rent = (int(days) + 1) * rec.room_no_id.rent
                 else:
                     init_date = rec.check_in.strftime("%Y-%m-%d")
@@ -53,12 +49,10 @@ class Accommodation(models.Model):
                     checkin_date = datetime.strptime(init_date, '%Y-%m-%d')
                     checkout_date = datetime.strptime(end_date, '%Y-%m-%d')
                     days = str((checkout_date - checkin_date).days)
-                    print("New days: ", int(days)+1)
                     rec.days_stay = int(days) + 1
                     rent = (int(days) + 1) * rec.room_no_id.rent
             else:
                 rent = rec.room_no_id.rent
-        # print("days :", days.days)
             self.update({'rent': rent})
             result = self.env['room.food'].search([
                 ('name', '=', 'Rent'), ('acco_id', '=', self.seq_no)
@@ -103,16 +97,15 @@ class Accommodation(models.Model):
         ('checkin', 'Check-In'),
         ('checkout', 'Check-Out'),
         ('cancel', 'Cancelled'),
-        ('paid', 'Paid')
-    ], string="Status", readonly="True",
-        default="draft", tracking=1, tracking_visibility='always')
+        ('paid', 'Paid')], string="Status", readonly="True", default="draft",
+        tracking=1, tracking_visibility='always')
     current_date = fields.Datetime(default=fields.Date.today())
     # food_order_ids = fields.One2many('food.menu', 'accommodation_id',
     #                                  readonly="False",
     #                                  domain=[('accommodation_id', '=',
     #                                           seq_no)])
-    orders_id = fields.One2many('room.food', 'accommodation_id',
-                                compute=_compute_orders_id)
+    orders_ids = fields.One2many('room.food', 'accommodation_id',
+                                 compute=_compute_orders_id)
     orders_count = fields.Integer(compute=_compute_orders_count)
     days_stay = fields.Integer()
     invoice_id = fields.Many2one('account.move', compute=_compute_invoice_id)
@@ -153,7 +146,6 @@ class Accommodation(models.Model):
         result = self.env['room.facilities'].search([
             ('id', 'in', self.room_no_id.facility.ids)
         ])
-        print("Facility ", result)
         self.rent = self.room_no_id.rent
         self.update({'facilities_ids': result})
 
@@ -193,10 +185,9 @@ class Accommodation(models.Model):
             ('name', '=', 'Rent')])
         rent_uom = self.env['room.food'].search(
             [('food_name', '=', 'Rent')])
-        print("UOM :", rent_uom.uom_id)
         columns = {
             'acco_id': self.seq_no,
-            'food_id': rent_product.id,
+            'product_id': rent_product.id,
             'quantity': self.days_stay,
             'name': "Rent",
             'description': "Rent",
@@ -204,7 +195,6 @@ class Accommodation(models.Model):
             'order': 'True',
             'rent': 'True',
             'price': rent}
-        print("Out test: ", columns)
         self.env['room.food'].create(columns)  # Creating a record for rent
 
     def action_checkout(self):
@@ -217,34 +207,17 @@ class Accommodation(models.Model):
             rec.state = 'checkout'
             rec.check_out = fields.Datetime.now()
 
-            # order_id = rec.orders_id[0].order_id
-            rent = rec.rent
-            # print("Order Id: ", order_id)
-        # columns = {
-        #     'acco_id': self.seq_no,
-        #     # 'orders_id': order_id.order_sequence,
-        #     # 'category_id': '7',
-        #     'quantity': self.days_stay,
-        #     'name': "Rent",
-        #     'description': "Rent for days",
-        #     'order': 'True',
-        #     'rent': 'True',
-        #     'price': rent}
-        # print("Out test: ", columns)
-        # self.env['room.food'].create(columns) #Creating a record for rent
-
         """Create Customer invoice"""
         invoice_lines = []
-        for rec in self.orders_id:
+        for rec in self.orders_ids:
             line = (0, 0, {
-                'product_id': rec.food_id.id,
+                'product_id': rec.product_id,
                 'name': rec.name,
                 'price_unit': rec.price,
                 'quantity': rec.quantity,
                 'discount': 0.0,
             })
             invoice_lines.append(line)
-        print("Invoices :", invoice_lines)
         for rec in self:
             invoice_line = self.env['account.move'].create({
                 'partner_id': self.guest_id.id,
@@ -265,7 +238,6 @@ class Accommodation(models.Model):
                 'res_model': 'account.move',
                 'res_id': invoice_line.id
             }
-            rec.state = 'paid'
 
     def action_cancel(self):
         """

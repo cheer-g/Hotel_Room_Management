@@ -14,7 +14,6 @@ class OrderFood(models.Model):
             result = self.env['room.food'].search([
                 ('orders_id', '=', rec.order_sequence),
                 ('order', '=', 'True')])
-            print("Result :", result)
             rec.update({'order_ids': result})
 
     # Order details
@@ -39,8 +38,7 @@ class OrderFood(models.Model):
     state = fields.Selection([
         ('draft', 'Draft'),
         ('ordered', 'Ordered'),
-        ('cancel', 'Cancelled')
-    ], string="Status", readonly="True",
+        ('cancel', 'Cancelled')], string="Status", readonly="True",
         default="draft", tracking=1, tracking_visibility='always')
 
     @api.onchange('room_no_id')
@@ -48,7 +46,6 @@ class OrderFood(models.Model):
         """
         Function to retrieve the corresponding accommodation entry
         """
-        print("Output : ", self.accommodation_id.guest_id.id)
         result_id = self.env['room.accommodation'].search([
             ('seq_no', '=', self.room_no_id.accommodation_seq)])
         self.update({'accommodation_id': result_id})
@@ -83,14 +80,10 @@ class OrderFood(models.Model):
         result.acco_id = self.accommodation_id.seq_no
         result.quantity = '1'
         result.order = 0
-        # for rec in result:
-        #     print("Test :", rec.order)
-        # print("test : ", result.order)
         self.update({'product_ids': result})
-        # return {'product_ids': result}
 
     def get_accommodation(self):
-        print("Acco :", self.accommodation_id)
+        """For smart button"""
         return {
             'type': 'ir.actions.act_window',
             'name': 'Accommodation',
@@ -116,83 +109,3 @@ class OrderFood(models.Model):
                 ('orders_id', '=', rec.order_sequence), ('order', '=', '1')])
             result.acco_id = 'False'
             rec.state = 'cancel'
-
-    def add_to_list(self):
-        """
-           Add to list function
-        """
-        print("View check")
-        form_view_id = self.env.ref("room_management.order_view_form").id
-        return {
-            'name': 'Add to list',
-            'type': 'ir.actions.act_window',
-            'res_model': 'room.food',
-            'views': [(form_view_id, 'form')],
-            'view_mode': 'form',
-            'target': 'new'
-        }
-
-
-class FoodMenu(models.Model):
-    _name = 'food.menu'
-    _description = 'Food Menu'
-    # _rec_name = 'food_id'
-
-    food_id = fields.Many2one('room.food')
-    quantity = fields.Integer(default="1")
-
-    def add_to_list(self):
-        """Add to List"""
-        vals = {
-            'food_id': self.food_id,
-            'quantity': self.quantity
-        }
-        self.env['room.food'].create(vals)
-
-    # def _compute_subtotal_price(self):
-    #     """
-    #     Compute total price based on the quantity ordered
-    #     """
-    #     # print("Acco :", self.accommodation_entry)
-    #     for rec in self:
-    #         rec.subtotal_price = rec.price * rec.quantity
-    #
-    # def _compute_price(self):
-    #     """Compute item price"""
-    #     for rec in self:
-    #         if not rec.rent:
-    #             rec.update({'price': rec.food_id.price})
-    #         else:
-    #             rec.price = 0
-    # order_id = fields.Many2one('order.food')
-    # accommodation_id = fields.Many2one('room.accommodation',
-    #                                       related='order_id.accommodation_id',
-    #                                    string="Accommodation ID")
-    # quantity = fields.Integer(string="Quantity", default='1')
-    # image = fields.Image(related='food_id.image')
-    # food_id = fields.Many2one('room.food')
-    # description = fields.Text(related='food_id.description')
-    # currency_id = fields.Many2one(
-    #     'res.currency', string='Currency',
-    #     default=lambda self: self.env.user.company_id.currency_id.id,
-    #     required=True)
-    # price = fields.Float(compute=_compute_price)
-    # subtotal_price = fields.Float(compute=_compute_subtotal_price,
-    #                               string="Subtotal")
-    # rent = fields.Boolean(default=False)
-    # amount_total = fields.Float()
-    # category_id = fields.Char()
-    #
-    # def add_to_list(self):
-    #     """
-    #        Add to list function
-    #     """
-    #     print("View check")
-    #     return {
-    #         'name': 'Add to list',
-    #         'type': 'ir.actions.act_window',
-    #         'res_model': 'food.menu',
-    #         'view_mode': 'form',
-    #         'view_type': 'form',
-    #         'target': 'new'
-    #     }

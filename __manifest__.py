@@ -15,7 +15,7 @@
 
     'category': 'Tools',
     'version': '14.0.2.1.2',
-    'depends': ['base', 'contacts'],
+    'depends': ['base', 'contacts', 'uom', 'product', 'account'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

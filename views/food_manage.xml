@@ -10,14 +10,11 @@
                         <group style="width:60%%">
                             <field name="food_name" string="Name"/>
                             <field name="category_id"/>
-<!--                            <field name="order_id"/>-->
-<!--                            <field name="accommodation_id" force_save="1"/>-->
                             <field name="description"/>
                             <field name="image" widget="image"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="price" widget="monetary"/>
                             <field name="uom_id"/>
-<!--                            <field name="order"/>-->
                         </group>
                     </sheet>
                 </form>
@@ -54,8 +51,6 @@
         <record id="view_food" model="ir.actions.act_window">
             <field name="name">Food</field>
             <field name="res_model">room.food</field>
-<!--            <field name="view_id" ref="room_management.food_create_view"/>-->
-<!--            <field name="view_id" ref="room_management.food_create_tree_view"/>-->
             <field name="view_mode">tree,form</field>
             <field name="domain">[('category_id.id', '!=', ['7', False])]</field>
         </record>
@@ -64,6 +59,7 @@
         <record id="food_category_view" model="ir.actions.act_window">
             <field name="name">Food Category</field>
             <field name="res_model">food.category</field>
+            <field name="domain">[('category_name', '!=', 'Rent')]</field>
             <field name="view_mode">tree</field>
         </record>
 
