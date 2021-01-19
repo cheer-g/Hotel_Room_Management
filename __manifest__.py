@@ -24,7 +24,10 @@
         'views/facility.xml',
         'views/order_food_view.xml',
         'views/food_manage.xml',
+        'views/reporting_wizard.xml',
         'views/templates.xml',
+        'reports/report.xml',
+        'reports/accommodation_report.xml',
         'data/sequence.xml'
     ],
 }

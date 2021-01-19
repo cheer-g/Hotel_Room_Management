@@ -11,6 +11,13 @@ class Accommodation(models.Model):
     _inherit = 'mail.thread'
     _rec_name = 'seq_no'
 
+    def _compute_amount_total(self):
+        if self.orders_ids:
+            for rec in self.orders_ids:
+                self.amount_total += rec.subtotal_price
+        else:
+            self.amount_total = 0
+
     def _compute_invoice_id(self):
         """get invoice and check status"""
         for rec in self:
@@ -20,16 +27,16 @@ class Accommodation(models.Model):
             self.update({'invoice_id': result})
         self.update({'paid_state': self.invoice_id.payment_state})
 
-    def _compute_orders_id(self):
-        """Display corresponding orders"""
-        for rec in self:
-            result_id = self.env['room.food'].search([
-                ('acco_id', '=', rec.seq_no),
-                ('order', '=', 'True')])
-            if result_id:
-                self.update({'orders_ids': result_id.ids})
-            else:
-                self.update({'orders_ids': False})
+    # def _compute_orders_id(self):
+    #     """Display corresponding orders"""
+    #     for rec in self:
+    #         result_id = self.env['room.food'].search([
+    #             ('acco_id', '=', rec.seq_no),
+    #             ('order', '=', 'True')])
+    #         if result_id:
+    #             self.update({'orders_ids': result_id.ids})
+    #         else:
+    #             self.update({'orders_ids': False})
 
     def _compute_rent(self):
         """Compute rent based on no. of days"""
@@ -54,6 +61,7 @@ class Accommodation(models.Model):
             else:
                 rent = rec.room_no_id.rent
             self.update({'rent': rent})
+            self.update({'rent_amount': rent})
             result = self.env['room.food'].search([
                 ('name', '=', 'Rent'), ('acco_id', '=', self.seq_no)
             ])
@@ -105,11 +113,14 @@ class Accommodation(models.Model):
     #                                  domain=[('accommodation_id', '=',
     #                                           seq_no)])
     orders_ids = fields.One2many('room.food', 'accommodation_id',
-                                 compute=_compute_orders_id)
+                                 domain=[('order', '=', 'True')])
+                                 # compute=_compute_orders_id)
     orders_count = fields.Integer(compute=_compute_orders_count)
     days_stay = fields.Integer()
     invoice_id = fields.Many2one('account.move', compute=_compute_invoice_id)
     paid_state = fields.Char(compute=_compute_invoice_id)
+    amount_total = fields.Float(compute=_compute_amount_total, string="Total")
+    rent_amount = fields.Float(default='0')
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -186,7 +197,7 @@ class Accommodation(models.Model):
         rent_uom = self.env['room.food'].search(
             [('food_name', '=', 'Rent')])
         columns = {
-            'acco_id': self.seq_no,
+            'accommodation_id': self.id,
             'product_id': rent_product.id,
             'quantity': self.days_stay,
             'name': "Rent",

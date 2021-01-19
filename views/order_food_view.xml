@@ -38,8 +38,8 @@
                                 <group>
                                     <field name="category_ids" widget="many2many_checkboxes" required="0"
                                             attrs="{'readonly': [('state','!=', 'draft')]}"/>
-                                    <field name="product_ids" widget="many2many_kanban"
-                                               context="{'form_view_ref': 'room_management.order_view_form'}">
+                                    <field name="product_ids"  mode="kanban"
+                                               context="{'form_view_ref': 'room_management.order_view_form', 'default_order_id': 'id'}">
                                         <kanban js_class="lunch_kanban" class="o_kanban_mobile" edit="1">
                                             <field name="id"/>
                                             <field name="food_name"/>
@@ -122,6 +122,8 @@
                         <button string="Add To List"
                                 type="object" class="oe_highlight"
                                 name="add_to_list"/>
+                        <button string="close" class="oe_highlight"
+                                special="cancel"/>
                     </footer>
                 </form>
             </field>

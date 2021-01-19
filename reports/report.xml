@@ -1,0 +1,10 @@
+<odoo>
+    <report
+        id = "report_hotel_accommodation"
+        string = "Accommodation Report"
+        model = "room.accommodation"
+        report_type = "qweb-pdf"
+        name = "room_management.accommodation"
+        file = "room_management.accommodation"
+        menu = "False"/>
+</odoo>

@@ -10,11 +10,12 @@ class OrderFood(models.Model):
     _inherit = 'mail.thread'
 
     def _compute_order_ids(self):
-        for rec in self:
-            result = self.env['room.food'].search([
-                ('orders_id', '=', rec.order_sequence),
-                ('order', '=', 'True')])
-            rec.update({'order_ids': result})
+        # self.update({'order_ids': self.id})
+        result = self.env['room.food'].search(
+            [('category_id', 'in', self.category_ids.ids)])
+        result.orders_id = self.id
+        print("ID :", self.id)
+        # self._compute_order_id_test()
 
     # Order details
     order_sequence = fields.Char(string="Order No.", required="True",
@@ -32,14 +33,14 @@ class OrderFood(models.Model):
                                     required=True,
                                     domain=[('category_name', '!=', 'Rent')])
     product_ids = fields.Many2many('room.food', string='Product')
-    order_ids = fields.One2many('room.food', 'order_id',
-                                compute=_compute_order_ids)
-    orders = fields.Char()
+    order_ids = fields.One2many('room.food', 'order_id')
+    orders = fields.Char(compute=_compute_order_ids)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('ordered', 'Ordered'),
         ('cancel', 'Cancelled')], string="Status", readonly="True",
         default="draft", tracking=1, tracking_visibility='always')
+    amount_total = fields.Float()
 
     @api.onchange('room_no_id')
     def _onchange_room_no_id(self):
@@ -76,8 +77,10 @@ class OrderFood(models.Model):
         """
         result = self.env['room.food'].search(
             [('category_id', 'in', self.category_ids.ids)])
+        print("ID :", self.id)
+        print("orderrr id :", result.order_id)
         result.orders_id = self.order_sequence
-        result.acco_id = self.accommodation_id.seq_no
+        result.accommodation_id = self.accommodation_id.id
         result.quantity = '1'
         result.order = 0
         self.update({'product_ids': result})
@@ -99,6 +102,7 @@ class OrderFood(models.Model):
         #     [('category_id', '=', False)])
         # result.orders_id = False
         # result.acco_id = False
+        print("iddddd : ", self.id)
         for rec in self:
             rec.state = 'ordered'
 

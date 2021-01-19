@@ -35,7 +35,7 @@ class FoodItems(models.Model):
 
     order_id = fields.Many2one('order.food')
     orders_id = fields.Char()
-    accommodation_id = fields.Char(related='order_id.accommodation_id.seq_no')
+    accommodation_id = fields.Many2one('room.food')
     acco_id = fields.Char()
     quantity = fields.Integer(string="Quantity", store="True")
     image_view = fields.Image(related='food_id.image')
@@ -56,10 +56,14 @@ class FoodItems(models.Model):
         """Add to list"""
         food_product = self.env['product.product'].search([
             ('name', '=', 'Food Item')])
+
         for rec in self:
+            order = self.env['order.food'].search([
+                ('order_sequence', '=', rec.orders_id)])
+            print("Orderr :", order.id)
             columns = {
-                'acco_id': rec.acco_id,
-                'orders_id': rec.orders_id,
+                'accommodation_id': rec.accommodation_id.id,
+                'order_id': order.id,
                 'product_id': food_product.id,
                 'name': rec.food_name,
                 'quantity': rec.quantity,
@@ -70,7 +74,8 @@ class FoodItems(models.Model):
                 'rent': 'False',
                 'price': rec.price
                 }
-        self.order_id.orders = columns
+            print("Orderrrr : ", rec.orders_id)
+        # self.order_id.orders = columns
         self.env['room.food'].create(columns)
 
 

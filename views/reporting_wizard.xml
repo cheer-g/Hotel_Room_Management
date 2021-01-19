@@ -1,0 +1,41 @@
+<odoo>
+        <!-- Reporting wizard-->
+        <record id="accommodation_report_wizard" model="ir.ui.view">
+            <field name="name">Accommodation report</field>
+            <field name="model">report.room_management.accommodation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="guest_id"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_print_pdf" type="object"
+                                string="Print PDF"/>
+                        <button name="cancel" special="cancel"
+                                string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Reporting  Action-->
+
+          <record model="ir.actions.act_window" id="report_wizard_action">
+            <field name="name">Accommodation Report</field>
+            <field name="res_model">report.room_management.accommodation</field>
+            <field name="view_id" ref="accommodation_report_wizard"/>
+            <field name="target">new</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <!-- Reporting menu-->
+         <menuitem name="Reporting" id="room_management.reporting"
+                   parent="room_management.menu_root"
+                  action="report_wizard_action"/>
+</odoo>
