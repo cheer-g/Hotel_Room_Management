@@ -1,0 +1,36 @@
+<odoo>
+<!--    Wizard View-->
+    <record id="xlsx_accommodation_report" model="ir.ui.view">
+        <field name="name">Accommodation Report</field>
+        <field name="model">accommodation.reporting</field>
+        <field name="arch" type="xml">
+            <form string="Filter report">
+                <serperator string="Excel Report"/>
+                <group col="4">
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+                <group>
+                    <field name="guest_id"/>
+                </group>
+                <footer>
+                    <button name="print_xlsx" string="Print" class="oe-highlight"
+                            type="object" default_focus="1"/>
+                    <button string="Cancel" special="cancel" class="btn btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+<!--    Wizard action-->
+    <record id="action_xlsx_report" model="ir.actions.act_window">
+        <field name="name">Excel</field>
+        <field name="res_model">accommodation.reporting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="excel_report" name="Excel Report"
+              parent="room_management.config" action="action_xlsx_report"/>
+</odoo>

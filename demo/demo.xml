@@ -1,16 +1,15 @@
 <odoo>
     <data noupdate="1">
 
-          <record id="room_management_data" model="room.management">
-            <field name="room_no">Room 99</field>
-          </record>
+        <record id="room_management_data" model="product.product">
+            <field name="name">Rent</field>
+            <field name="type">service</field>
+        </record>
 
-          <record id="room_accommodation_data" model="room.accommodation">
-            <field name="seq_no">HM/ROOM/007</field>
-            <field name="guest_id">9</field>
-            <field name="room_no_id">007</field>
-            <field name="state">checkin</field>
-          </record>
+        <record id="room_management_data" model="product.product">
+              <field name="name">Food Item</field>
+              <field name="type">service</field>
+        </record>
 
     </data>
 </odoo>

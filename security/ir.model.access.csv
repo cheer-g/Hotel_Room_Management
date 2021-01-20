@@ -7,3 +7,4 @@ hotel_order_food,Order Food,model_order_food,base.group_user,1,1,1,1
 hotel_food_create,Foods,model_room_food,base.group_user,1,1,1,1
 hotel_food_category,Food Category,model_food_category,base.group_user,1,1,1,1
 report_wizard,Accommodation Report,model_report_room_management_accommodation,base.group_user,1,1,1,1
+xlsx_report,Excel Report,model_accommodation_reporting,base.group_user,1,1,1,1

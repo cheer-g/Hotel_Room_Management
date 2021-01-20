@@ -28,6 +28,8 @@
         'views/templates.xml',
         'reports/report.xml',
         'reports/accommodation_report.xml',
-        'data/sequence.xml'
+        'wizard/xlsx_report.xml',
+        'data/sequence.xml',
+        'demo/demo.xml'
     ],
 }

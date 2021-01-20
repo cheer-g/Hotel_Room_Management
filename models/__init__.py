@@ -2,4 +2,4 @@
 
 from . import models, room_management_accommodation, \
     room_management_facilities, room_management_order_food, \
-    room_management_food, reporting_wizard, accommodation_report
+    room_management_food, accommodation_report, main

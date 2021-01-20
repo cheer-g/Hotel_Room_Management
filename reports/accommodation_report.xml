@@ -76,7 +76,7 @@
                             </td>
                         </t>
                         <td>
-                            <t t-esc="line['room_no_id']"/>
+                            <t t-esc="line['room_no']"/>
                         </td>
                         <td>
                             <t t-esc="line['check_in']"/>

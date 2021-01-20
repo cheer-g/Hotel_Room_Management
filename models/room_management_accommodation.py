@@ -27,17 +27,6 @@ class Accommodation(models.Model):
             self.update({'invoice_id': result})
         self.update({'paid_state': self.invoice_id.payment_state})
 
-    # def _compute_orders_id(self):
-    #     """Display corresponding orders"""
-    #     for rec in self:
-    #         result_id = self.env['room.food'].search([
-    #             ('acco_id', '=', rec.seq_no),
-    #             ('order', '=', 'True')])
-    #         if result_id:
-    #             self.update({'orders_ids': result_id.ids})
-    #         else:
-    #             self.update({'orders_ids': False})
-
     def _compute_rent(self):
         """Compute rent based on no. of days"""
         for rec in self:
@@ -63,7 +52,7 @@ class Accommodation(models.Model):
             self.update({'rent': rent})
             self.update({'rent_amount': rent})
             result = self.env['room.food'].search([
-                ('name', '=', 'Rent'), ('acco_id', '=', self.seq_no)
+                ('name', '=', 'Rent'), ('accommodation_id', '=', self.id)
             ])
             result.quantity = self.days_stay
 

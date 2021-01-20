@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, api, fields
+from odoo .exceptions import ValidationError
 
 
 class AccommodationReport(models.Model):
@@ -12,7 +13,10 @@ class AccommodationReport(models.Model):
 
     def action_print_pdf(self):
         """print pdf action"""
-        print("Guest : ", self.guest_id.name)
+        if self.date_from and self.date_to:
+            if self.date_from > self.date_to:
+                raise ValidationError("Date From must be less than Date To")
+
         data = {
             'model_id': self.id,
             'date_from': self.date_from,
@@ -38,77 +42,97 @@ class AccommodationReport(models.Model):
         if guest:
             if date_from:
                 if date_to:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
-                                partner.name, rent_amount
+                    query = """ SELECT guest_id, check_in, check_out, 
+                                room_no.room_no, partner.name, rent_amount
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE room.guest_id = %s
                                 AND CAST(room.check_in AS DATE) >= 
                                 CAST('%s' AS DATE)
                                 AND CAST(room.check_out AS DATE) <=
-                                CAST('%s' AS DATE)""" % (guest, date_from, date_to)
+                                CAST('%s' AS DATE)
+                                OR room.check_out IS NULL""" % (guest, date_from, date_to)
                 else:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 rent_amount, partner.name
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE CAST(room.check_in AS DATE) >= 
                                 CAST('%s' AS DATE)
                                 AND room.guest_id = %s""" % (date_from, guest)
             else:
                 if date_to:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 partner.name, rent_amount
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE room.guest_id = %s
                                 AND CAST(room.check_out AS DATE) <=
-                                CAST('%s' AS DATE)""" % (guest, date_to)
+                                CAST('%s' AS DATE)
+                                OR room.check_out IS NULL""" % (guest, date_to)
                 else:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 rent_amount, partner.name
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE room.guest_id = %s""" % guest
         else:
             if date_from:
                 if date_to:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 partner.name, rent_amount
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE CAST(room.check_in AS DATE) >= 
                                 CAST('%s' AS DATE)
                                 AND CAST(room.check_out AS DATE) <=
-                                CAST('%s' AS DATE)""" % (date_from, date_to)
+                                CAST('%s' AS DATE)
+                                OR room.check_out IS NULL""" % (date_from, date_to)
                 else:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 rent_amount, partner.name
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE CAST(room.check_in AS DATE) >= 
                                 CAST('%s' AS DATE)""" % date_from
             else:
                 if date_to:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 partner.name, rent_amount
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
                                 ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id
                                 WHERE CAST(room.check_out AS DATE) <=
-                                CAST('%s' AS DATE)""" % date_to
+                                CAST('%s' AS DATE)
+                                OR room.check_out IS NULL""" % date_to
                 else:
-                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                    query = """ SELECT guest_id, check_in, check_out, room_no.room_no, 
                                 rent_amount, partner.name
                                 FROM room_accommodation as room
                                 INNER JOIN res_partner as partner
-                                ON room.guest_id = partner.id"""
+                                ON room.guest_id = partner.id
+                                INNER JOIN room_management as room_no
+                                ON room.room_no_id = room_no.id"""
 
         value.append(model_id)
         self._cr.execute(query, value)
