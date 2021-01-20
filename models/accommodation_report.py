@@ -27,26 +27,100 @@ class AccommodationReport(models.Model):
         """Access the data returned from the button"""
         model_id = data['model_id']
         value = []
-        guest = data['guest_id']
-        print("Test Out : ", guest)
-        if guest:
-            query = """ SELECT guest_id, check_in, check_out, room_no_id, 
-                        partner.name, rent_amount
-                        FROM room_accommodation as room
-                        INNER JOIN res_partner as partner
-                        ON room.guest_id = partner.id
-                        WHERE room.guest_id = %s""" % guest
+        if data['guest_id']:
+            guest = data['guest_id']
         else:
-            query = """ SELECT guest_id, check_in, check_out, room_no_id, 
-                        rent_amount, partner.name
-                        FROM room_accommodation as room
-                        INNER JOIN res_partner as partner
-                        ON room.guest_id = partner.id"""
+            guest = False
+
+        date_from = data['date_from']
+        date_to = data['date_to']
+        # print("Test Out : ", type(date_from))
+        if guest:
+            if date_from:
+                if date_to:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                partner.name, rent_amount
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE room.guest_id = %s
+                                AND CAST(room.check_in AS DATE) >= 
+                                CAST('%s' AS DATE)
+                                AND CAST(room.check_out AS DATE) <=
+                                CAST('%s' AS DATE)""" % (guest, date_from, date_to)
+                else:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                rent_amount, partner.name
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE CAST(room.check_in AS DATE) >= 
+                                CAST('%s' AS DATE)
+                                AND room.guest_id = %s""" % (date_from, guest)
+            else:
+                if date_to:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                partner.name, rent_amount
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE room.guest_id = %s
+                                AND CAST(room.check_out AS DATE) <=
+                                CAST('%s' AS DATE)""" % (guest, date_to)
+                else:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                rent_amount, partner.name
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE room.guest_id = %s""" % guest
+        else:
+            if date_from:
+                if date_to:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                partner.name, rent_amount
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE CAST(room.check_in AS DATE) >= 
+                                CAST('%s' AS DATE)
+                                AND CAST(room.check_out AS DATE) <=
+                                CAST('%s' AS DATE)""" % (date_from, date_to)
+                else:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                rent_amount, partner.name
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE CAST(room.check_in AS DATE) >= 
+                                CAST('%s' AS DATE)""" % date_from
+            else:
+                if date_to:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                partner.name, rent_amount
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id
+                                WHERE CAST(room.check_out AS DATE) <=
+                                CAST('%s' AS DATE)""" % date_to
+                else:
+                    query = """ SELECT guest_id, check_in, check_out, room_no_id, 
+                                rent_amount, partner.name
+                                FROM room_accommodation as room
+                                INNER JOIN res_partner as partner
+                                ON room.guest_id = partner.id"""
+
         value.append(model_id)
         self._cr.execute(query, value)
         record = self._cr.dictfetchall()
         print("Record : ", record)
+        for rec in record:
+            guest_name = rec['name']
         return {
             'docs': record,
-            'date_today': fields.Datetime.now()
+            'date_today': fields.Datetime.now(),
+            'guest': guest,
+            'guest_name': guest_name,
+            'date_from': date_from,
+            'date_to': date_to
         }

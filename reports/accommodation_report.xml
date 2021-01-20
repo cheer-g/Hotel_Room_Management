@@ -4,9 +4,30 @@
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <div class="page">
-                    <h2>Hotel Management</h2>
-                    Date :
-                    <t t-esc="date_today"/>
+                    <h2 align="center">Hotel Management</h2>
+                    <table>
+                        <tr>
+                            <th>Date :</th>
+                            <td><t t-esc="date_today"/><br/></td>
+                        </tr>
+                        <tr>
+                            <t t-if="guest">
+                                <th>Guest :</th>
+                                <td><t t-esc="guest_name"/><br/></td>
+                            </t>
+                        </tr>
+                        <tr>
+                            <t t-if="date_from">
+                                <th>Date From :</th>
+                                <td><t t-esc="date_from"/></td>
+                            </t>
+                            <t t-if="date_to">
+                                <th>Date To :</th>
+                                <td><t t-esc="date_to"/></td>
+                            </t>
+                        </tr>
+                    </table>
+                    <t><br/></t>
                     <t t-call="room_management.details_table"/>
                 </div>
             </t>
@@ -22,9 +43,11 @@
                     <th name="th-slno">
                         <span>SL No</span>
                     </th>
-                    <th name="th-guest">
-                        <span>Guest</span>
-                    </th>
+                    <t t-if="not guest">
+                        <th name="th-guest">
+                            <span>Guest</span>
+                        </th>
+                    </t>
                     <th name="th-room">
                         <span>Room No.</span>
                     </th>
@@ -47,9 +70,11 @@
                             <span t-esc="sl_no"/>
                             <t t-set="sl_no" t-value="sl_no+1"/>
                         </td>
-                        <td>
-                            <t t-esc="line['name']"/>
-                        </td>
+                        <t t-if="not guest">
+                            <td>
+                                <t t-esc="line['name']"/>
+                            </td>
+                        </t>
                         <td>
                             <t t-esc="line['room_no_id']"/>
                         </td>

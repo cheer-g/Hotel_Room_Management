@@ -9,13 +9,6 @@ class OrderFood(models.Model):
     _rec_name = 'order_sequence'
     _inherit = 'mail.thread'
 
-    def _compute_order_ids(self):
-        # self.update({'order_ids': self.id})
-        result = self.env['room.food'].search(
-            [('category_id', 'in', self.category_ids.ids)])
-        result.orders_id = self.id
-        print("ID :", self.id)
-        # self._compute_order_id_test()
 
     # Order details
     order_sequence = fields.Char(string="Order No.", required="True",
@@ -34,7 +27,6 @@ class OrderFood(models.Model):
                                     domain=[('category_name', '!=', 'Rent')])
     product_ids = fields.Many2many('room.food', string='Product')
     order_ids = fields.One2many('room.food', 'order_id')
-    orders = fields.Char(compute=_compute_order_ids)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('ordered', 'Ordered'),

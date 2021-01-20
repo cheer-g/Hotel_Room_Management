@@ -16,7 +16,7 @@
                     </sheet>
                     <footer>
                         <button name="action_print_pdf" type="object"
-                                string="Print PDF"/>
+                                string="Print PDF" class="oe_highlight"/>
                         <button name="cancel" special="cancel"
                                 string="Cancel"/>
                     </footer>
@@ -26,7 +26,7 @@
 
         <!-- Reporting  Action-->
 
-          <record model="ir.actions.act_window" id="report_wizard_action">
+        <record model="ir.actions.act_window" id="report_wizard_action">
             <field name="name">Accommodation Report</field>
             <field name="res_model">report.room_management.accommodation</field>
             <field name="view_id" ref="accommodation_report_wizard"/>
