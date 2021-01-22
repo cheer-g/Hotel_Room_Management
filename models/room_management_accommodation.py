@@ -21,11 +21,12 @@ class Accommodation(models.Model):
     def _compute_invoice_id(self):
         """get invoice and check status"""
         for rec in self:
-            result = self.env['account.move'].search([
-                ('name', '=', rec.seq_no)
-            ])
+            result = self.env['account.move'].search(
+                [('payment_reference', '=', self.seq_no)])
             self.update({'invoice_id': result})
-        self.update({'paid_state': self.invoice_id.payment_state})
+            # rec.invoice_count = len(result)
+        self.update({'paid_state': self.invoice_id.payment_state,
+                     'invoice_count': len(result)})
 
     def _compute_rent(self):
         """Compute rent based on no. of days"""
@@ -107,9 +108,13 @@ class Accommodation(models.Model):
     orders_count = fields.Integer(compute=_compute_orders_count)
     days_stay = fields.Integer()
     invoice_id = fields.Many2one('account.move', compute=_compute_invoice_id)
+    invoice_count = fields.Integer()
     paid_state = fields.Char(compute=_compute_invoice_id)
     amount_total = fields.Float(compute=_compute_amount_total, string="Total")
     rent_amount = fields.Float(default='0')
+
+    _sql_constraints = [
+        ('seq_no', 'unique (seq_no)', 'Accommodation Number repeats !')]
 
     @api.onchange('expected_days')
     def _onchange_expected_date(self):
@@ -154,16 +159,18 @@ class Accommodation(models.Model):
         """
         To Generate Sequence number
         """
-        if vals.get('seq_no', 'New') == 'New':
-            vals['seq_no'] = self.env['ir.sequence'].next_by_code(
-                'acc.seq') or 'New'
-        result = super(Accommodation, self).create(vals)
-        return result
+        if self.state != 'draft':
+            if vals.get('seq_no', 'New') == 'New':
+                vals['seq_no'] = self.env['ir.sequence'].next_by_code(
+                    'acc.seq') or 'New'
+            result = super(Accommodation, self).create(vals)
+            return result
 
     def action_checkin(self):
         """
          Change state to checkin and update check_in field using Confirm button
         """
+        rent = False
         for rec in self:
             guest_count_list = 1 + len(self.add_guest_ids.ids)
             if not self.message_main_attachment_id.id:
@@ -194,7 +201,8 @@ class Accommodation(models.Model):
             'uom_id': rent_uom.uom_id.id,
             'order': 'True',
             'rent': 'True',
-            'price': rent}
+            'price': rent,
+            'tax_ids': rent_uom.tax_ids.ids}
         self.env['room.food'].create(columns)  # Creating a record for rent
 
     def action_checkout(self):
@@ -216,6 +224,7 @@ class Accommodation(models.Model):
                 'price_unit': rec.price,
                 'quantity': rec.quantity,
                 'discount': 0.0,
+                'tax_ids': rec.tax_ids
             })
             invoice_lines.append(line)
         for rec in self:
@@ -223,12 +232,13 @@ class Accommodation(models.Model):
                 'partner_id': self.guest_id.id,
                 'currency_id': self.currency_id.id,
                 'l10n_in_gst_treatment': 'consumer',
-                'name': self.seq_no,
+                # 'name': "INV/"+self.seq_no,
                 'state': 'draft',
                 'move_type': 'out_invoice',
                 'invoice_date': self.check_out,
                 # 'account_id': self.account_receivable.id,
                 'invoice_line_ids': invoice_lines,
+                'payment_reference': self.seq_no
             })
             # invoice_line.action_post()
             return {
@@ -256,6 +266,19 @@ class Accommodation(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'order.food',
             'domain': [('accommodation_id', '=', self.id)],
+            'context': "{'create': False}"
+        }
+
+    def get_invoices(self):
+        """Smart button for invoices"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Invoices',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            # 'domain': ['|', ('name', '=', "INV/"+self.seq_no),
+            #            ('name', '=', "Draft Invoice INV/"+self.seq_no)],
+            'domain': [('payment_reference', '=', self.seq_no)],
             'context': "{'create': False}"
         }
 

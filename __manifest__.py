@@ -21,6 +21,7 @@
         'security/ir.model.access.csv',
         'views/accommodation.xml',
         'views/views.xml',
+        'views/action_manager.xml',
         'views/facility.xml',
         'views/order_food_view.xml',
         'views/food_manage.xml',
@@ -30,6 +31,6 @@
         'reports/accommodation_report.xml',
         'wizard/xlsx_report.xml',
         'data/sequence.xml',
-        'demo/demo.xml'
+        'data/data.xml'
     ],
 }

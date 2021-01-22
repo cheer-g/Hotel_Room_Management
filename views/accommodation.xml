@@ -22,7 +22,11 @@
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box"/>
-                        <widget name="web_ribbon" title="Paid" attrs="{'invisible': [('paid_state', '!=', 'paid')]}"/>
+<!--                        <div class="oe_button_box" name="button_box_invoice"/>-->
+                        <widget name="web_ribbon" title="Paid"
+                                attrs="{'invisible': [('paid_state', '!=', 'paid')]}"/>
+                        <widget name="web_ribbon" title="Partial"
+                                attrs="{'invisible': [('paid_state', '!=', 'partial')]}"/>
                         <field name="paid_state" invisible="1"/>
                         <group colspan="2">
                             <group col="2">
@@ -53,7 +57,7 @@
                                 <field name="check_out" states="checkout"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="rent" readonly="1" widget="monetary"/>
-                                <field name="invoice_id" states="checkout"/>
+<!--                                <field name="invoice_id" states="checkout"/>-->
                             </group>
                         </group>
                         <notebook>
@@ -140,6 +144,27 @@
                             <span class="o_stat_text"><field name="orders_ids"
                                    widget="statinfo" string="Orders" invisible="1"/></span>
                             <span class="o_stat_text">Orders</span>
+                        </div>
+                    </button>
+                </div>
+            </field>
+        </record>
+
+<!--        Smart button for invoices-->
+        <record id="invoices_smart_button" model="ir.ui.view">
+            <field name="name">Invoices</field>
+            <field name="model">room.accommodation</field>
+            <field name="inherit_id" ref="room_accommodation"/>
+            <field name="arch" type="xml">
+                <div class="oe_button_box" name="button_box" position="inside">
+                    <button class="oe_stat_button" type="object"
+                            name="get_invoices" icon="fa-pencil-square-o"
+                    attrs="{'invisible': [('invoice_count', '=', 0)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text"><field name="invoice_count"/></span>
+                            <span class="o_stat_text"><field name="invoice_id"
+                                   widget="statinfo" string="Orders" invisible="1"/></span>
+                            <span class="o_stat_text">Invoices</span>
                         </div>
                     </button>
                 </div>

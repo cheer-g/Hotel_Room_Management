@@ -51,6 +51,7 @@ class FoodItems(models.Model):
     name = fields.Char()
     order = fields.Boolean(default=False)
     uom_id = fields.Many2one('uom.uom', string="UoM")
+    tax_ids = fields.Many2many('account.tax')
 
     def add_to_list(self):
         """Add to list"""
@@ -72,7 +73,8 @@ class FoodItems(models.Model):
                 # 'food_name': rec.food_name,
                 'description': rec.description,
                 'rent': 'False',
-                'price': rec.price
+                'price': rec.price,
+                'tax_ids': rec.tax_ids.ids
                 }
             print("Orderrrr : ", rec.orders_id)
         # self.order_id.orders = columns

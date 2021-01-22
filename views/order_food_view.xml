@@ -122,8 +122,7 @@
                         <button string="Add To List"
                                 type="object" class="oe_highlight"
                                 name="add_to_list"/>
-                        <button string="close" class="oe_highlight"
-                                special="cancel"/>
+                        <button string="Close" special="cancel"/>
                     </footer>
                 </form>
             </field>

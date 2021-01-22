@@ -21,9 +21,9 @@ class XLSXReportController(http.Controller):
             if output_format == 'xlsx':
                 response = request.make_response(
                     None,
-                    headers = [('Content-Type',  'application/vnd.ms-excel'),
-                               ('Content-Disposition',
-                                content_disposition(report_name + '.xlsx'))]
+                    headers=[('Content-Type', 'application/vnd.ms-excel'),
+                             ('Content-Disposition',
+                              content_disposition(report_name + '.xlsx'))]
                 )
                 report_obj.get_xlsx_report(options, response)
                 response.set_cookie('fileToken', token)

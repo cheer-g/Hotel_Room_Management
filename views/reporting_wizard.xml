@@ -7,6 +7,9 @@
                 <form>
                     <sheet>
                         <group>
+                            <field name="check_out"/>
+                        </group>
+                        <group col="4">
                             <field name="date_from"/>
                             <field name="date_to"/>
                         </group>

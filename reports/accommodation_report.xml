@@ -92,6 +92,9 @@
                 </t>
             </tbody>
         </table>
+        <t t-if="not docs">
+            <t><h3 align="center">No records found !</h3></t>
+        </t>
     </template>
 
 </odoo>

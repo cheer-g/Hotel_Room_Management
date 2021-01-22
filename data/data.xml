@@ -1,0 +1,15 @@
+<odoo>
+    <data noupdate="1">
+
+        <record id="rent_product" model="product.product">
+            <field name="name">Rent</field>
+            <field name="type">service</field>
+        </record>
+
+        <record id="food_product" model="product.product">
+              <field name="name">Food Item</field>
+              <field name="type">consu</field>
+        </record>
+
+    </data>
+</odoo>
