@@ -31,6 +31,6 @@
         'reports/accommodation_report.xml',
         'wizard/xlsx_report.xml',
         'data/sequence.xml',
-        'data/data.xml'
+        # 'data/data.xml'
     ],
 }

@@ -20,6 +20,8 @@
                     <footer>
                         <button name="action_print_pdf" type="object"
                                 string="Print PDF" class="oe_highlight"/>
+                        <button name="print_xlsx" string="Print XLSX" class="oe_highlight"
+                            type="object"/>
                         <button name="cancel" special="cancel"
                                 string="Cancel"/>
                     </footer>
@@ -39,6 +41,5 @@
 
         <!-- Reporting menu-->
          <menuitem name="Reporting" id="room_management.reporting"
-                   parent="room_management.menu_root"
-                  action="report_wizard_action"/>
+                   parent="room_management.menu_root" action="report_wizard_action"/>
 </odoo>
